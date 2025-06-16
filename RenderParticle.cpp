@@ -10,28 +10,24 @@ void RenderParticle::Draw()
 
 		/*POSITION*/
 		model->moveModel(PhysicsParticle->Position);
-		//std::cout << PhysicsParticle->Position.x << "  " << PhysicsParticle->Position.y << "  " << PhysicsParticle->Position.z << "  " << std::endl;
-		
+
 		/*SCALE*/
-		model->scaleModel(P6::MyVector(0.10f, 0.10f, 0.10f));
+		model->scaleModel(P6::MyVector(PhysicsParticle->radius, PhysicsParticle->radius, PhysicsParticle->radius));
 
 		model->renderModel();
 	}
 }
 
-int RenderParticle::recordTime(float value, int rank)
+void RenderParticle::checkLifespan(float value)
 {
-	if (!bRecorded)
+	if (value >= 1.0f)
 	{
-		rank++;
-		std::cout << Name << "Rank: " << rank << " ,total time: " << value << "seconds" << std::endl;
-
-		bRecorded = true;
-
-		
+		PhysicsParticle->lifespan -= value;
 	}
 
-	return rank;
+	if (PhysicsParticle->lifespan <= 0.0f) PhysicsParticle->Destroy();
+
+
 }
 
 

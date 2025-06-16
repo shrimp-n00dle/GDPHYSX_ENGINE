@@ -1,6 +1,6 @@
 #include "PhysicsWorld.h"
 
-void P6::PhysicsWorld::addParticle(P6::MyParticle* particle)
+void P6::PhysicsWorld::addParticle(P6::EngineParticle* particle)
 {
 	particleList.push_back(particle);
 	
@@ -13,7 +13,7 @@ void P6::PhysicsWorld::Update(float time)
 
 	forceRegistry.updateForces(time);
 
-	for (std::list<MyParticle*>::iterator p = particleList.begin();
+	for (std::list<EngineParticle*>::iterator p = particleList.begin();
 		//If its not the end, move to the next particle
 		p != particleList.end(); p++)
 	
@@ -28,7 +28,7 @@ void P6::PhysicsWorld::updateParticleList()
 {
 	particleList.remove_if( 
 		
-		[](MyParticle* p)
+		[](EngineParticle* p)
 			{
 			return p->IsDestroyed();
 			}

@@ -1,6 +1,6 @@
 #pragma once
 #include <list>
-#include "MyParticle.h"
+#include "EngineParticle.h"
 #include "ForceRegistry.h"
 #include "GravityForceGenerator.h"
 
@@ -12,9 +12,9 @@ namespace P6
 
 			ForceRegistry forceRegistry;
 
-			std::list<MyParticle*> particleList;
+			std::list<EngineParticle*> particleList;
 
-			void addParticle(MyParticle* particle);
+			void addParticle(EngineParticle* particle);
 
 			//Calls the UPDATE OF ALL
 			void Update(float time);
@@ -22,8 +22,8 @@ namespace P6
 		private:
 			void updateParticleList();
 
-			//GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -9.8, 0));
-			GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, 0, 0));
+			GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -9.8f, 0));
+			//GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, 0, 0));
 
 	};
 

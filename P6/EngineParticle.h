@@ -4,7 +4,7 @@
 
 namespace P6
 {
-	class MyParticle
+	class EngineParticle
 	{
 
 		/*ATTRIBUTES*/
@@ -12,7 +12,7 @@ namespace P6
 
 		float lifespan = 0;
 
-		float mass = 0;
+		MyVector Acceleration;
 
 		MyVector Position;
 
@@ -20,11 +20,11 @@ namespace P6
 
 		float damping = 0.9f;
 
-		MyVector Acceleration;
+		/*OPTIONAL*/
+		float radius = 0.0f;
+		float mass = 0.1f;
+		MyVector accumulatedForce;
 
-		bool bBoost = false;
-
-		std::string Name;
 
 	protected:
 		bool bDestroy = false;
@@ -32,28 +32,12 @@ namespace P6
 
 		/*METHODS*/
 	protected:
-		//force gathered before the FIXED update
-		MyVector accumulatedForce = MyVector(0, 0, 0);
 
 		void updatePosition(float time);
 
 		void updateVelocity(float time);
 
 	public:
-
-		MyParticle(std::string name) : Name(name) {};
-
-		MyParticle(const MyParticle& clone)
-		{
-			mass = clone.mass;
-			Position = clone.Position;
-			Velocity = clone.Velocity;
-			damping = clone.damping;
-			Acceleration = clone.Acceleration;
-			bBoost = clone.bBoost;
-			Name = clone.Name;
-
-		};
 
 		//Updates the particle and the methods above for EACH PARTICLE
 		void updateParticle(float time);

@@ -15,7 +15,7 @@ namespace P6
 		DragForceGenerator(float _k1, float _k2) : k1(_k1), k2(_k2) {}
 
 		//Override the updateForce()
-		void updateForce(MyParticle* particle, float time) override;
+		void updateForce(EngineParticle* particle, float time) override;
 
 	};
 }

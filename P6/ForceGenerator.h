@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MyParticle.h"
+#include "EngineParticle.h"
 
 /*Base class that computes the froce
 to be applied to the target particle*/
@@ -10,7 +10,7 @@ namespace P6
 	{
 	public:
 
-		virtual void updateForce(MyParticle* p, float time)
+		virtual void updateForce(EngineParticle* p, float time)
 		{
 			p->addForce(MyVector(0, 0, 0));
 		}

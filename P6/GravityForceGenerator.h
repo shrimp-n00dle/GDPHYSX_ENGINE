@@ -15,7 +15,7 @@ namespace P6
 			GravityForceGenerator(const MyVector gravity) : Gravity(gravity) {};
 			
 			//override
-			void updateForce(MyParticle* particle, float time) override;
+			void updateForce(EngineParticle* particle, float time) override;
 
 	};
 
