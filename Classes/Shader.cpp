@@ -37,4 +37,31 @@ Shader::Shader()
     glAttachShader(shaderProg, fragmentShader);
 
     glLinkProgram(shaderProg);
+
+    // Clean up individual shaders as they're now linked into the program
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+}
+
+void Shader::use()
+{
+    glUseProgram(shaderProg);
+}
+
+void Shader::setMat4(const std::string& name, const glm::mat4& mat)
+{
+    unsigned int location = glGetUniformLocation(shaderProg, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+void Shader::setVec3(const std::string& name, const glm::vec3& vec)
+{
+    unsigned int location = glGetUniformLocation(shaderProg, name.c_str());
+    glUniform3fv(location, 1, glm::value_ptr(vec));
+}
+
+void Shader::setFloat(const std::string& name, float value)
+{
+    unsigned int location = glGetUniformLocation(shaderProg, name.c_str());
+    glUniform1f(location, value);
 }

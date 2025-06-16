@@ -1,19 +1,13 @@
 #version 330 core
+layout (location = 0) in vec3 aPos;
 
-//Gets the data at Attrib Index 0 
-//Converts it and stores it into a Vec3
-layout(location = 0) in vec3 aPos;
+// Matrices from your C++ code
+uniform mat4 transform;   // Model matrix (from your existing code)
+uniform mat4 view;        // Camera view matrix (NEW)
+uniform mat4 projection;  // Projection matrix (UPDATED)
 
-//Creates a transform variable
-//We'll assign the transformation matrix here later
-uniform mat4 transform;
-
-//Create a Projection Matrix
-//We'll assign the projection Matrix here
-uniform mat4 projection;
-
-void main(){
-	//gl_Position is predefined
-	//this denotes the final position of the vertex / point
-	gl_Position = projection * transform * vec4(aPos,1.0); //Turns vec3 into vec4
+void main()
+{
+    // Apply all transformations: Projection * View * Model * Vertex
+    gl_Position = projection * view * transform * vec4(aPos, 1.0);
 }
