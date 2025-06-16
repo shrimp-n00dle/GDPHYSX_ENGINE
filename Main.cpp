@@ -80,6 +80,7 @@ RenderParticle* createParticle(P6::PhysicsWorld* pWorld, Model* model)
     pWorld->forceRegistry.Add(p, f);
     pWorld->addParticle(p);
 
+    /*Adding in the particles, models and thier colors*/
     RenderParticle* rp = new RenderParticle(p, model, P6::MyVector(color - 3, color2, color3 - 3));
     return rp;
 }
@@ -201,7 +202,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(800, 800, "Group 8 / Fountain Engine", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "Group 8 / Bubble Engine", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -352,15 +353,23 @@ int main(void)
         for (std::list<RenderParticle*>::iterator i = rParticleList.begin();
             i != rParticleList.end(); i++)
         {
-            /*Check lifespan first*/
+            /*Check lifespan first
+            if the lifespan is greater than 0 and the program is not paused*/
             if ((*i)->PhysicsParticle->lifespan > 0.0f && !isPaused) // Only update lifespan when not paused
             {
+                //Method checks if a second has a passed by, it will set the value of bSecond to true if thats the case
                 (*i)->checkLifespan(((float)timer.count() / 1000));
+
+
                 if ((*i)->PhysicsParticle->bSecond)
                 {
+                    //set it to false first to avoid repeition
                     (*i)->PhysicsParticle->bSecond = false;
 
+                    //destory and remove particle from the list
                     if ((*i)->PhysicsParticle->lifespan < 1.0f) (*i)->PhysicsParticle->Destroy();
+
+                    //reset the timer again
                     timer -= timer;
                 }
             }
