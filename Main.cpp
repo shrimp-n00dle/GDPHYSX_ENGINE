@@ -37,6 +37,77 @@ bool isPerspective = true; // Start with perspective
 // Pause variable
 bool isPaused = false;
 
+// Fountain variables
+float particleSpawnRate = 5.0f; // particles per second
+float timeSinceLastSpawn = 0.0f;
+int maxParticles = 100; // maximum particles alive at once
+int particlesPerBurst = 1; // how many particles to spawn at once
+
+// Function to create a single particle
+RenderParticle* createParticle(P6::PhysicsWorld* pWorld, Model* model)
+{
+    /*RANDOM GENERATOR*/
+    //color
+    float color = rand() % 10;
+    float color2 = rand() % 10;
+    float color3 = rand() % 10;
+
+    // More fountain-like velocity (upward with some spread)
+    float veloX = ((rand() % 100) / 100.0f - 0.5f) * 2.0f; // -1 to 1
+    float veloY = (rand() % 50 + 50) / 100.0f * 8.0f + 2.0f; // 2 to 6 (upward)
+    float veloZ = ((rand() % 100) / 100.0f - 0.5f) * 2.0f; // -1 to 1
+
+    // Gravity-like acceleration
+    float accelX = 0.0f;
+    float accelY = -9.81f; // gravity
+    float accelZ = 0.0f;
+
+    P6::EngineParticle* p = new P6::EngineParticle();
+    p->Velocity = P6::MyVector(veloX, veloY, veloZ);
+    p->Position = P6::MyVector(0, -0.7f, 0); // spawn at bottom
+    p->Acceleration = P6::MyVector(accelX, accelY, accelZ);
+
+    P6::ForceGenerator* f = new P6::ForceGenerator;
+    p->addForce(P6::MyVector(0, 0, 0)); // Let gravity handle the force
+
+    //radius
+    p->radius = (float)((float)(rand() % 10 + 2) / (float)(rand() % 10 + 2)) / 10;
+
+    //lifespan (shorter for fountain effect)
+    p->lifespan = (rand() % 30 + 10) / 10.0f; // 1.0 to 4.0 seconds
+
+    f->updateForce(p, 0.1f);
+    pWorld->forceRegistry.Add(p, f);
+    pWorld->addParticle(p);
+
+    RenderParticle* rp = new RenderParticle(p, model, P6::MyVector(color - 3, color2, color3 - 3));
+    return rp;
+}
+
+// Function to clean up dead particles
+void cleanupDeadParticles(std::list<RenderParticle*>& rParticleList)
+{
+    auto it = rParticleList.begin();
+    while (it != rParticleList.end())
+    {
+        if ((*it)->PhysicsParticle->lifespan <= 0.0f || (*it)->PhysicsParticle->Position.y < -5.0f)
+        {
+            // Mark particle for destruction (PhysicsWorld will handle removal automatically)
+            (*it)->PhysicsParticle->Destroy();
+
+            // Clean up render particle
+            delete (*it);
+
+            // Remove from render list
+            it = rParticleList.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
 // Input callback function
 void processInput(GLFWwindow* window, float deltaTime)
 {
@@ -72,6 +143,18 @@ void processInput(GLFWwindow* window, float deltaTime)
         glm::vec4 newOffset = rotation * glm::vec4(offset, 1.0f);
         cameraPos = cameraTarget + glm::vec3(newOffset);
         std::cout << "D pressed - Camera rotated right" << std::endl;
+    }
+
+    // Control spawn rate with Q/E keys
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+        particleSpawnRate = std::max(1.0f, particleSpawnRate - 5.0f * deltaTime);
+        std::cout << "Spawn rate: " << particleSpawnRate << " particles/sec" << std::endl;
+    }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    {
+        particleSpawnRate = std::min(20.0f, particleSpawnRate + 5.0f * deltaTime);
+        std::cout << "Spawn rate: " << particleSpawnRate << " particles/sec" << std::endl;
     }
 
     // --- Projection switching (1: Orthographic, 2: Perspective) ---
@@ -118,7 +201,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(800, 800, "Group 8 - Phase 1", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "Group 8 - Fountain Particles", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -153,48 +236,9 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
 
-    int totalParticles = 0;
-    std::cout << "Input how many particles do you want to generate?" << std::endl << "[INPUT]: ";
-
-    std::cin >> totalParticles;
-
-
-   for (int i = 0; i <= totalParticles; i++)
-   {
-       /*RANDOM GENERATOR*/
-
-        //color
-       float color = rand() % 10;
-       float color2 = rand() % 10;
-       float color3 = rand() % 10;
-
-       float veloValue = rand() % 5 + -2.0f;
-       float veloValue2 = rand() % 8;
-
-       float accelValue = rand() % 2 + 1.0f;
-       float accelValue2 = rand() % 5;
-
-        P6::EngineParticle* p = new P6::EngineParticle();
-        p->Velocity = P6::MyVector(veloValue, veloValue2, 0);
-        p->Position = P6::MyVector(0, -0.7f, 0);
-        p->Acceleration = P6::MyVector(accelValue, accelValue2, 0);
-
-        P6::ForceGenerator* f = new P6::ForceGenerator;
-        p->addForce(P6::MyVector(0, 3, 0));
-
-        //radius
-        p->radius = (float)((float)(rand() % 10 + 2) / (float)(rand() % 10 + 2)) / 10;
-
-        //lifespan
-        p->lifespan = rand() % 10 + 1.0f;
-
-
-        f->updateForce(p, 0.1f);
-        pWorld.forceRegistry.Add(p, f);
-        pWorld.addParticle(p);
-        RenderParticle* rp = new RenderParticle(p, &model, P6::MyVector(color - 3, color2, color3 - 3));
-        rParticleList.push_back(rp);
-    }
+    // Get spawn rate from user
+    std::cout << "Enter particle spawn rate (particles per second): ";
+    std::cin >> particleSpawnRate;
 
     /*TIME IMPLEMENTATION*/
     using clock = std::chrono::high_resolution_clock;
@@ -209,6 +253,7 @@ int main(void)
     // Print initial controls
     std::cout << "=== CONTROLS ===" << std::endl;
     std::cout << "WASD: Camera movement" << std::endl;
+    std::cout << "Q/E: Decrease/Increase spawn rate" << std::endl;
     std::cout << "1: Orthographic projection" << std::endl;
     std::cout << "2: Perspective projection" << std::endl;
     std::cout << "SPACE: Pause/Resume simulation" << std::endl;
@@ -236,9 +281,24 @@ int main(void)
         if (!isPaused) // Only update timer and physics when not paused
         {
             timer += timeAdd;
+            timeSinceLastSpawn += deltaTime;
         }
 
         prev_time = curr_time;
+
+        // Spawn new particles continuously (fountain effect)
+        if (!isPaused && timeSinceLastSpawn >= (1.0f / particleSpawnRate))
+        {
+            if (rParticleList.size() < maxParticles)
+            {
+                for (int i = 0; i < particlesPerBurst; i++)
+                {
+                    RenderParticle* newParticle = createParticle(&pWorld, &model);
+                    rParticleList.push_back(newParticle);
+                }
+            }
+            timeSinceLastSpawn = 0.0f;
+        }
 
         //add dur to last iteration to the time since our last frame
         if (!isPaused) // Only update physics when not paused
@@ -252,6 +312,12 @@ int main(void)
                 curr_ns -= curr_ns;
                 pWorld.Update((float)ms.count() / 1000);
             }
+        }
+
+        // Clean up dead particles
+        if (!isPaused)
+        {
+            cleanupDeadParticles(rParticleList);
         }
 
         /* Render here */
@@ -282,12 +348,7 @@ int main(void)
         unsigned int viewLoc = glGetUniformLocation(modelShader.shaderProg, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-        if (!isPaused) // Only print timer when not paused
-        {
-            // Comment out the timer print to reduce console spam
-            // std::cout << (float)timer.count() / 1000 << std::endl;
-        }
-
+        // Draw all active particles
         for (std::list<RenderParticle*>::iterator i = rParticleList.begin();
             i != rParticleList.end(); i++)
         {
@@ -306,6 +367,15 @@ int main(void)
 
             /*Draw the results*/
             (*i)->Draw();
+        }
+
+        // Display particle count
+        static float displayTimer = 0.0f;
+        displayTimer += deltaTime;
+        if (displayTimer >= 1.0f) // Update every second
+        {
+            std::cout << "Active particles: " << rParticleList.size() << " | Spawn rate: " << particleSpawnRate << "/sec" << std::endl;
+            displayTimer = 0.0f;
         }
 
         /* Swap front and back buffers */
