@@ -71,37 +71,49 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
 
-   for (int i = 0; i <= 10; i++)
+
+   for (int i = 0; i <= 100; i++)
    {
-       std::string str = std::to_string(i);
+       /*RANDOM GENERATOR*/
+
+       //color
+       
+       float color = rand() %10;
+       float color2 = rand() % 10;
+       float color3 = rand() % 10;
+
+       float veloValue = rand() % 1 + -1.0f;
+       float veloValue2 = rand() % 8;
+
+       float accelValue = rand() % 8 + 1.0f;
+       float accelValue2 = rand() % 8;
+
+       //std::cout << "Lifepsan is " << p->lifespan << std::endl;
+
+
+
         P6::EngineParticle* p = new P6::EngineParticle();
-        //p->Velocity = P6::MyVector(0, 0.1f, 0);
-        p->Position = P6::MyVector((float)i/10, 0.1f, 0);
-        //p->Acceleration = P6::MyVector(0, 0.3f, 0);
+        p->Velocity = P6::MyVector(veloValue, veloValue2, 0);
+        p->Position = P6::MyVector(0, -0.7f, 0);
+        // p->Position = P6::MyVector(0, -0.1f, 0);
+        p->Acceleration = P6::MyVector(accelValue, accelValue2, 0);
 
   
-        P6::ForceGenerator f;
+        P6::ForceGenerator* f = new P6::ForceGenerator;
         
-        //p->addForce(P6::MyVector(0, 3, 0));
+        p->addForce(P6::MyVector(0, 3, 0));
 
-
-        /*RANDOM GENERATOR*/
-
-        //color
-        float color = rand() % 3 + 0.1f;
-
-        //radius
+             //radius
         p->radius = (float)(rand() % 1 + 0.20f);// 0.10f;
 
         //lifespan
         p->lifespan = 1.0f;//rand() % 1 + 1.0f;
 
-        std::cout << "Lifepsan is " << p->lifespan << std::endl;
 
-        f.updateForce(p, 0.1f);
-        pWorld.forceRegistry.Add(p, &f);
+        f->updateForce(p, 0.1f);
+        pWorld.forceRegistry.Add(p, f);
         pWorld.addParticle(p);
-        RenderParticle* rp = new RenderParticle(p, &model, P6::MyVector(color, color - 1, color - 2));
+        RenderParticle* rp = new RenderParticle(p, &model, P6::MyVector(color, color2, 0.0f));
        rParticleList.push_back(rp);
    }
 
@@ -150,17 +162,19 @@ int main(void)
             i != rParticleList.end(); i++)
         {  
             /*Check lifespan first*/
-
-            if ((*i)->PhysicsParticle->lifespan >= 0.0f)
+            if ((*i)->PhysicsParticle->lifespan > 0.0f)
                 {
                     (*i)->checkLifespan(((float)timer.count() / 1000));
                     if ((*i)->PhysicsParticle->bSecond)
                         { 
-                            timer -= timer; 
                             (*i)->PhysicsParticle->bSecond = false;
+
+                            if ((*i)->PhysicsParticle->lifespan < 1.0f) (*i)->PhysicsParticle->Destroy();
+                            timer -= timer; 
+                            
                         }
             }
-            else (*i)->PhysicsParticle->Destroy();
+            
            
             /*Draw the results*/
             (*i)->Draw();
