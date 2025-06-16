@@ -23,7 +23,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 //This is going to be our time in between "frames"
-constexpr std::chrono::nanoseconds timestep(16ms);
+constexpr std::chrono::nanoseconds timestep(30ms);
 
 // Camera variables
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
@@ -153,14 +153,16 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
 
-    for (int i = 0; i <= 100; i++)
-    {
-        /*RANDOM GENERATOR*/
 
-        //color
-        float color = rand() % 10;
-        float color2 = rand() % 10;
-        float color3 = rand() % 10;
+   for (int i = 0; i <= 100; i++)
+   {
+       /*RANDOM GENERATOR*/
+
+       //color
+       
+       float color = rand() %10;
+       float color2 = rand() % 10;
+       float color3 = rand() % 10;
 
         float veloValue = rand() % 1 + -1.0f;
         float veloValue2 = rand() % 8;
