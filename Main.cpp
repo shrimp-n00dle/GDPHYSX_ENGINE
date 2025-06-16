@@ -20,7 +20,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 //This is going to be our time in between "frames"
-constexpr std::chrono::nanoseconds timestep(16ms);
+constexpr std::chrono::nanoseconds timestep(30ms);
 
 int main(void)
 {
@@ -71,13 +71,17 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
 
+    int totalParticles = 0;
+    std::cout << "Input how many particles do you want to generate?" << std::endl << "[INPUT]: ";
 
-   for (int i = 0; i <= 100; i++)
+    std::cin >> totalParticles;
+
+
+   for (int i = 0; i <= totalParticles; i++)
    {
        /*RANDOM GENERATOR*/
 
        //color
-       
        float color = rand() %10;
        float color2 = rand() % 10;
        float color3 = rand() % 10;
