@@ -23,10 +23,8 @@ void RenderParticle::checkLifespan(float value)
 	if (value >= 1.0f)
 	{
 		PhysicsParticle->lifespan -= value;
+		PhysicsParticle->bSecond = true;
 	}
-
-	if (PhysicsParticle->lifespan <= 0.0f) PhysicsParticle->Destroy();
-
 
 }
 

@@ -20,6 +20,8 @@ namespace P6
 
 		float damping = 0.9f;
 
+		bool bSecond = false;
+
 		/*OPTIONAL*/
 		float radius = 0.0f;
 		float mass = 0.1f;

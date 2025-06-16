@@ -75,14 +75,14 @@ int main(void)
    {
        std::string str = std::to_string(i);
         P6::EngineParticle* p = new P6::EngineParticle();
-        p->Velocity = P6::MyVector(0, 0.1f, 0);
+        //p->Velocity = P6::MyVector(0, 0.1f, 0);
         p->Position = P6::MyVector((float)i/10, 0.1f, 0);
-        p->Acceleration = P6::MyVector(0, 0.3f, 0);
+        //p->Acceleration = P6::MyVector(0, 0.3f, 0);
 
   
         P6::ForceGenerator f;
         
-        p->addForce(P6::MyVector(0, 3, 0));
+        //p->addForce(P6::MyVector(0, 3, 0));
 
 
         /*RANDOM GENERATOR*/
@@ -150,8 +150,18 @@ int main(void)
             i != rParticleList.end(); i++)
         {  
             /*Check lifespan first*/
-            (*i)->checkLifespan(((float)timer.count() / 1000));
-            if ((*i)->PhysicsParticle->IsDestroyed()) timer -= timer;
+
+            if ((*i)->PhysicsParticle->lifespan >= 0.0f)
+                {
+                    (*i)->checkLifespan(((float)timer.count() / 1000));
+                    if ((*i)->PhysicsParticle->bSecond)
+                        { 
+                            timer -= timer; 
+                            (*i)->PhysicsParticle->bSecond = false;
+                        }
+            }
+            else (*i)->PhysicsParticle->Destroy();
+           
             /*Draw the results*/
             (*i)->Draw();
         }
