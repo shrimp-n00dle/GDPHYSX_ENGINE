@@ -15,10 +15,9 @@ void P6::PhysicsWorld::Update(float time)
 
 	for (std::list<EngineParticle*>::iterator p = particleList.begin();
 		//If its not the end, move to the next particle
-		p != particleList.end(); p++)
-	
+		p != particleList.end(); p++)	
 	{
-		//std::cout << "COUNTER: " << *p << std::endl;
+
 		/*Call the update*/
 		(*p)->updateParticle(time);
 	}

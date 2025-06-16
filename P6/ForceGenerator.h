@@ -2,7 +2,7 @@
 
 #include "EngineParticle.h"
 
-/*Base class that computes the froce
+/*Base class that computes the force
 to be applied to the target particle*/
 namespace P6
 {
@@ -14,15 +14,6 @@ namespace P6
 		{
 			p->addForce(MyVector(0, 0, 0));
 		}
-
-		float randomForce(int higher, int lower);
-
-		
-		//overload
-		// void UpdateForce(float time)
-		//{
-			//do something else
-		//};
 
 	};
 }

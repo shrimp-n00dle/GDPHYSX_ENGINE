@@ -2,12 +2,13 @@
 
 #include "MyVector.h"
 
+/*Particle class made for Phase 1*/
 namespace P6
 {
 	class EngineParticle
 	{
 
-		/*ATTRIBUTES*/
+	/*ATTRIBUTES*/
 	public:
 
 		float lifespan = 0;
@@ -20,9 +21,10 @@ namespace P6
 
 		float damping = 0.9f;
 
+		/*A boolean value holding if a second has passed with the particle on screen, if true, 
+		the lifespan will be deducted by 1 and will be false again afterwards*/
 		bool bSecond = false;
 
-		/*OPTIONAL*/
 		float radius = 0.0f;
 		float mass = 0.1f;
 		MyVector accumulatedForce;
@@ -46,8 +48,6 @@ namespace P6
 
 		void addForce(MyVector force);
 		void resetForce();
-
-		float randomAccel();
 
 	public:
 		void Destroy();

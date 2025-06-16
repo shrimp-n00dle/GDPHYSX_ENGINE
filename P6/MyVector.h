@@ -35,14 +35,6 @@ namespace P6
 				return sum;
 			}
 
-			//shift ctrl /
-			/*MyVector operator+ (float rhs)
-			{
-				MyVector sum(this->x + rhs, this->y + rhs, this->z + rhs);
-
-				return sum;
-			}*/
-
 			/*[+=] Addition*/
 			void operator+= (const MyVector rhs)
 			{
@@ -60,7 +52,7 @@ namespace P6
 				return difference;
 			}
 
-			/*Scalar Multiplication*/
+			/*Scalar Multiplication || the * opertator when dealing with MyVector multiplication*/
 			MyVector scalarMultiplication(const float value);
 			
 			/*Component Product*/

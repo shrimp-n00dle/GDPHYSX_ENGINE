@@ -48,16 +48,5 @@ void P6::EngineParticle::resetForce()
 	Acceleration = MyVector(0, 0, 0);
 }
 
-float P6::EngineParticle::randomAccel()
-{
-	/*if (!bBoost)
-	{
-		return rand() % 8 + 1.1f;
-		bBoost = true;
-	}
-	else */return 0.0f;
-
-}
-
 
 

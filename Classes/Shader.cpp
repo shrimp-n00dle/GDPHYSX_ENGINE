@@ -2,16 +2,13 @@
 
 Shader::Shader()
 {
-    /*shaders are programs that the GPU executes to control how graphics are rendered*/
- /*Vertex shaders process vertex data, affecting object geometry,*/
+
     std::fstream vertSrc("Shaders/Cake.vert");
     std::stringstream vertBuff;
     vertBuff << vertSrc.rdbuf();
     std::string vertS = vertBuff.str();
     const char* v = vertS.c_str();
 
-    /*Fragments are the individual samples of pixels that are covered by a primitive (like a triangle), and fragment shaders process each fragment to determine its final color and depth.*/
-    /*fragment shaders determine pixel colors, adding shading and texture details. */
     std::fstream fragSrc("Shaders/Cake.frag");
     std::stringstream fragBuff;
     fragBuff << fragSrc.rdbuf();

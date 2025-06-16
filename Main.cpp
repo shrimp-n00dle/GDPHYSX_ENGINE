@@ -201,7 +201,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(800, 800, "Group 8 - Fountain Particles", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "Group 8 / Fountain Engine", NULL, NULL);
     if (!window)
     {
         glfwTerminate();

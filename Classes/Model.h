@@ -22,9 +22,6 @@ class Model
 		/*Current positon, transform of the model*/
 		glm::mat4 transformation_matrix;
 
-		/*Vertex Array Object* - It stores the format of the vertex data as well as the Buffer Objects (see below) providing the vertex data arrays
- Vertex Buffer Object - store an array of unformatted memory allocated by the OpenGL context (AKA the GPU). These can be used to store vertex data,
- Element Buffer Object - This will reduce the number of vertices by removing redundant ones*/
 		GLuint VAO, VBO, EBO;
 
 		std::vector<tinyobj::shape_t> objShapes;

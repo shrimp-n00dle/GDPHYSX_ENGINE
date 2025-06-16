@@ -19,7 +19,7 @@ public:
 	bool bRecorded = false;
 
 public:
-	/*METHODS*/
+	/*CONSTRUCTORS*/
 	RenderParticle(P6::EngineParticle* particle, Model* currModel) : PhysicsParticle(particle), model(currModel) 
 	{
 		Color = P6::MyVector(1, 1, 1);
@@ -34,11 +34,7 @@ public:
 
 	void Draw();
 
+	/*It checks if the lifespan should be deducted by 1 or not yet*/
 	void checkLifespan(float value);
-
-	P6::MyVector randomAcceleration();
-
-
-
 };
 

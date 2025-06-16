@@ -5,7 +5,6 @@ void RenderParticle::Draw()
 	if (!PhysicsParticle->IsDestroyed())
 	{
 		/*COLOR*/
-		//model or particle? MODEL MUNA
 		model->setColor(Color);
 
 		/*POSITION*/
