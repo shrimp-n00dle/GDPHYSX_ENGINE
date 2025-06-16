@@ -153,22 +153,26 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
 
+    int totalParticles = 0;
+    std::cout << "Input how many particles do you want to generate?" << std::endl << "[INPUT]: ";
 
-   for (int i = 0; i <= 100; i++)
+    std::cin >> totalParticles;
+
+
+   for (int i = 0; i <= totalParticles; i++)
    {
        /*RANDOM GENERATOR*/
 
-       //color
-       
-       float color = rand() %10;
+        //color
+       float color = rand() % 10;
        float color2 = rand() % 10;
        float color3 = rand() % 10;
 
-        float veloValue = rand() % 1 + -1.0f;
-        float veloValue2 = rand() % 8;
+       float veloValue = rand() % 5 + -2.0f;
+       float veloValue2 = rand() % 8;
 
-        float accelValue = rand() % 8 + 1.0f;
-        float accelValue2 = rand() % 8;
+       float accelValue = rand() % 2 + 1.0f;
+       float accelValue2 = rand() % 5;
 
         P6::EngineParticle* p = new P6::EngineParticle();
         p->Velocity = P6::MyVector(veloValue, veloValue2, 0);
@@ -179,15 +183,16 @@ int main(void)
         p->addForce(P6::MyVector(0, 3, 0));
 
         //radius
-        p->radius = (float)(rand() % 1 + 0.20f);
+        p->radius = (float)((float)(rand() % 10 + 2) / (float)(rand() % 10 + 2)) / 10;
 
         //lifespan
-        p->lifespan = 1.0f;
+        p->lifespan = rand() % 10 + 1.0f;
+
 
         f->updateForce(p, 0.1f);
         pWorld.forceRegistry.Add(p, f);
         pWorld.addParticle(p);
-        RenderParticle* rp = new RenderParticle(p, &model, P6::MyVector(color, color2, 0.0f));
+        RenderParticle* rp = new RenderParticle(p, &model, P6::MyVector(color - 3, color2, color3 - 3));
         rParticleList.push_back(rp);
     }
 
