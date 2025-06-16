@@ -19,6 +19,9 @@ void RenderParticle::Draw()
 
 void RenderParticle::checkLifespan(float value)
 {
+	//the float value holds the time passing 
+
+	//if the time is more than a second, deduct 1 by the lifepsan of the particle, resetting of timer is called in Main.cpp
 	if (value >= 1.0f)
 	{
 		PhysicsParticle->lifespan -= value;
