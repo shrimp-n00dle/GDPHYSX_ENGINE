@@ -14,6 +14,7 @@
 #include "P6/MyParticle.h"
 #include "P6/PhysicsWorld.h"
 #include "P6/DragForceGenerator.h"
+#include "P6/Rod.h"  // <-- ADD THIS LINE - This is what's missing!
 
 #include "RenderParticle.h"
 #include "Classes/Model.h"
@@ -22,6 +23,7 @@
 
 //Import the libraries
 #include <chrono>
+#include <vector>
 using namespace std::chrono_literals;
 //This is going to be our time in between "frames"
 constexpr std::chrono::nanoseconds timestep(30ms);
@@ -119,7 +121,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(800, 800, "Group 8 / Bubble Engine", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "Group 8 / Pendulum Engine", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -154,34 +156,101 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
 
-    /*PARTICLE IMPLEMETATION - BUNGEE*/
-    P6::MyParticle pBungeeAnchor = P6::MyParticle();
-    pBungeeAnchor.Position = P6::MyVector(-0.2, 0.5, 0);
-    pBungeeAnchor.mass = 10;
-    pBungeeAnchor.restitution = 1;
-    pBungeeAnchor.radius = 0.2f;
-    pBungeeAnchor.Velocity = P6::MyVector(0, 0, 0);
+    /*PENDULUM IMPLEMENTATION*/
+    std::vector<P6::MyParticle*> pendulumParticles;
+    std::vector<P6::MyParticle*> anchorParticles;
+    std::vector<P6::Rod*> pendulumRods;
 
-    pWorld.addParticle(&pBungeeAnchor);
-    RenderParticle rBunA = RenderParticle("Pholder", &pBungeeAnchor, &model, P6::MyVector(0.0f, 0.0f, 1.0f));
-    rBunA.model->scaleModel(P6::MyVector(pBungeeAnchor.radius, pBungeeAnchor.radius, pBungeeAnchor.radius));
-    rParticleList.push_back(&rBunA);
+    // Pendulum parameters
+    const int NUM_PENDULUMS = 5;
+    const float PENDULUM_LENGTH = 0.8f;  // Length of each rod
+    const float PARTICLE_SPACING = 0.25f;  // Spacing between particles (adjust for Newton's cradle)
+    const float PARTICLE_RADIUS = 0.1f;
+    const float PARTICLE_MASS = 1.0f;
+    const float ROD_HEIGHT = 0.8f;  // Height of anchor points
 
-    P6::MyParticle particle = P6::MyParticle();
-    particle.Position = P6::MyVector(-0.2, -0.5, 0);
-    particle.mass = 15;
-    particle.radius = 0.2f;
-    particle.restitution = 1;
-    particle.addForce(P6::MyVector(0, 0.1, 0).scalarMultiplication(1.0));
-    particle.Velocity = P6::MyVector(0, 0.1, 0);
-    pWorld.addParticle(&particle);
+    // Create anchor points (fixed points at the top)
+    for (int i = 0; i < NUM_PENDULUMS; i++)
+    {
+        P6::MyParticle* anchor = new P6::MyParticle();
+        anchor->Position = P6::MyVector(
+            (i - 2) * PARTICLE_SPACING,  // Center the pendulums
+            ROD_HEIGHT,
+            0
+        );
+        anchor->mass = 0.0f;  // FIXED: Zero mass means infinite mass (immovable)
+        anchor->radius = 0.05f;
+        anchor->restitution = 0.1f;
+        anchor->Velocity = P6::MyVector(0, 0, 0);
 
-    // P6::Bungee pBungee = P6::Bungee(&pBungeeAnchor, 0.5, 0.25);
-    // pWorld.forceRegistry.Add(&particle, &pBungee);
+        // FIXED: Don't add anchors to physics world - they should be completely fixed
+        // pWorld.addParticle(anchor);
+        anchorParticles.push_back(anchor);
 
-    RenderParticle rParticle = RenderParticle("P1", &particle, &model, P6::MyVector(4.0f, 0.0f, 0.0f));
-    rParticle.model->scaleModel(P6::MyVector(particle.radius, particle.radius, particle.radius));
-    rParticleList.push_back(&rParticle);
+        // Create render particle for anchor (small, gray)
+        RenderParticle* rAnchor = new RenderParticle(
+            "Anchor" + std::to_string(i),
+            anchor,
+            &model,
+            P6::MyVector(0.5f, 0.5f, 0.5f)  // Gray color
+        );
+        rAnchor->model->scaleModel(P6::MyVector(anchor->radius, anchor->radius, anchor->radius));
+        rParticleList.push_back(rAnchor);
+    }
+
+    // Create pendulum particles
+    for (int i = 0; i < NUM_PENDULUMS; i++)
+    {
+        P6::MyParticle* particle = new P6::MyParticle();
+        particle->Position = P6::MyVector(
+            (i - 2) * PARTICLE_SPACING,  // Center the pendulums
+            ROD_HEIGHT - PENDULUM_LENGTH,  // Hang down from anchor
+            0
+        );
+        particle->mass = PARTICLE_MASS;
+        particle->radius = PARTICLE_RADIUS;
+        particle->restitution = 0.9f;  // High restitution for good energy transfer
+        particle->Velocity = P6::MyVector(0, 0, 0);
+
+        pWorld.addParticle(particle);
+        pendulumParticles.push_back(particle);
+
+        // Create render particle with different colors
+        P6::MyVector color;
+        if (i == 0) color = P6::MyVector(1.0f, 0.0f, 0.0f);      // Red (first)
+        else if (i == NUM_PENDULUMS - 1) color = P6::MyVector(0.0f, 0.0f, 1.0f);  // Blue (last)
+        else color = P6::MyVector(0.0f, 1.0f, 0.0f);            // Green (middle)
+
+        RenderParticle* rParticle = new RenderParticle(
+            "Pendulum" + std::to_string(i),
+            particle,
+            &model,
+            color
+        );
+        rParticle->model->scaleModel(P6::MyVector(particle->radius, particle->radius, particle->radius));
+        rParticleList.push_back(rParticle);
+    }
+
+    // Create rods connecting anchors to pendulum particles
+    for (int i = 0; i < NUM_PENDULUMS; i++)
+    {
+        P6::Rod* rod = new P6::Rod();
+        rod->particles[0] = anchorParticles[i];
+        rod->particles[1] = pendulumParticles[i];
+        rod->length = PENDULUM_LENGTH;
+        rod->restitution = 0.0f;  // Rods don't bounce
+
+        pWorld.Links.push_back(rod);
+        pendulumRods.push_back(rod);
+
+        // Debug output to verify rod connections
+        std::cout << "Rod " << i << " connected: Anchor(" << anchorParticles[i]->Position.x << ","
+            << anchorParticles[i]->Position.y << ") -> Pendulum(" << pendulumParticles[i]->Position.x
+            << "," << pendulumParticles[i]->Position.y << ")" << std::endl;
+    }
+
+    // Give the first pendulum an initial velocity to start the motion
+    pendulumParticles[0]->Velocity = P6::MyVector(1.5f, 0.0f, 0.0f);  // Reduced initial velocity
 
     /*TIME IMPLEMENTATION*/
     using clock = std::chrono::high_resolution_clock;
@@ -194,14 +263,13 @@ int main(void)
     auto lastFrameTime = clock::now();
 
     // Print initial controls
-    std::cout << "=== CONTROLS ===" << std::endl;
+    std::cout << "=== PENDULUM CONTROLS ===" << std::endl;
     std::cout << "WASD: Camera movement" << std::endl;
-    std::cout << "Q/E: Decrease/Increase spawn rate" << std::endl;
     std::cout << "1: Orthographic projection" << std::endl;
     std::cout << "2: Perspective projection" << std::endl;
     std::cout << "SPACE: Pause/Resume simulation" << std::endl;
     std::cout << "ESC: Exit" << std::endl;
-    std::cout << "================" << std::endl;
+    std::cout << "=========================" << std::endl;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -234,6 +302,9 @@ int main(void)
             curr_ns += dur;
             if (curr_ns >= timestep)
             {
+                // REMOVED: Don't manually apply gravity here since PhysicsWorld handles it
+                // The physics world already applies gravity through the ForceRegistry
+
                 //ms converstion
                 auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(curr_ns);
                 //Reset
@@ -274,7 +345,6 @@ int main(void)
         for (std::list<RenderParticle*>::iterator i = rParticleList.begin();
             i != rParticleList.end(); i++)
         {
-
             /*Draw the results*/
             (*i)->Draw();
         }
@@ -288,6 +358,20 @@ int main(void)
 
     /*Clean the vertex annd buffers*/
     model.cleanUp();
+
+    // Clean up dynamically allocated memory
+    for (auto* particle : pendulumParticles) {
+        delete particle;
+    }
+    for (auto* anchor : anchorParticles) {
+        delete anchor;
+    }
+    for (auto* rod : pendulumRods) {
+        delete rod;
+    }
+    for (auto* rParticle : rParticleList) {
+        delete rParticle;
+    }
 
     glfwTerminate();
     return 0;
