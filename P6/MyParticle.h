@@ -2,18 +2,20 @@
 
 #include "MyVector.h"
 
-/*The Particle class used for Phase 1 is the EngineParticle class*/
 namespace P6
 {
 	class MyParticle
 	{
 
-	/*ATTRIBUTES*/
+		/*ATTRIBUTES*/
 	public:
 
+		float mass = 0.1f;
 		float lifespan = 0;
 
-		float mass = 0;
+		float radius = 1.0f;
+
+		float restitution = 1.0f;
 
 		MyVector Position;
 
@@ -24,8 +26,6 @@ namespace P6
 		MyVector Acceleration;
 
 		bool bBoost = false;
-
-		std::string Name;
 
 	protected:
 		bool bDestroy = false;
@@ -41,7 +41,6 @@ namespace P6
 		void updateVelocity(float time);
 
 	public:
-
 		//Updates the particle and the methods above for EACH PARTICLE
 		void updateParticle(float time);
 

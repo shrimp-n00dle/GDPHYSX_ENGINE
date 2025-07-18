@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="Classes\Model.cpp" />
     <ClCompile Include="Classes\Shader.cpp" />
+    <ClCompile Include="ContactResolver.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="P6\DragForceGenerator.cpp" />
@@ -144,12 +145,17 @@
     <ClCompile Include="P6\GravityForceGenerator.cpp" />
     <ClCompile Include="P6\MyParticle.cpp" />
     <ClCompile Include="P6\MyVector.cpp" />
+    <ClCompile Include="P6\ParticleContact.cpp" />
+    <ClCompile Include="P6\ParticleLink.cpp" />
+    <ClCompile Include="P6\ParticleSpring.cpp" />
     <ClCompile Include="P6\PhysicsWorld.cpp" />
+    <ClCompile Include="P6\Rod.cpp" />
     <ClCompile Include="RenderParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Classes\Model.h" />
     <ClInclude Include="Classes\Shader.h" />
+    <ClInclude Include="ContactResolver.h" />
     <ClInclude Include="P6\DragForceGenerator.h" />
     <ClInclude Include="P6\EngineParticle.h" />
     <ClInclude Include="P6\ForceGenerator.h" />
@@ -157,7 +163,11 @@
     <ClInclude Include="P6\GravityForceGenerator.h" />
     <ClInclude Include="P6\MyParticle.h" />
     <ClInclude Include="P6\MyVector.h" />
+    <ClInclude Include="P6\ParticleContact.h" />
+    <ClInclude Include="P6\ParticleLink.h" />
+    <ClInclude Include="P6\ParticleSpring.h" />
     <ClInclude Include="P6\PhysicsWorld.h" />
+    <ClInclude Include="P6\Rod.h" />
     <ClInclude Include="RenderParticle.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>

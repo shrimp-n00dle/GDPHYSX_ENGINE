@@ -1,6 +1,6 @@
 #pragma once
 #include "P6/MyVector.h"
-#include "P6/EngineParticle.h"
+#include "P6/MyParticle.h"
 #include "Classes/Model.h"
 
 //using namespace P6;
@@ -10,7 +10,9 @@ class RenderParticle
 public:
 
 	/*ATTRIBUTES*/
-	P6::EngineParticle* PhysicsParticle;
+	P6::MyParticle* PhysicsParticle;
+
+	std::string Name;
 
 	Model* model;
 
@@ -19,22 +21,21 @@ public:
 	bool bRecorded = false;
 
 public:
-	/*CONSTRUCTORS*/
-	RenderParticle(P6::EngineParticle* particle, Model* currModel) : PhysicsParticle(particle), model(currModel) 
+	/*METHODS*/
+	RenderParticle(std::string name, P6::MyParticle* particle, Model* currModel) : Name(name), PhysicsParticle(particle), model(currModel)
 	{
 		Color = P6::MyVector(1, 1, 1);
 	}
 
-	RenderParticle() {};
-
-	RenderParticle(P6::EngineParticle* particle, Model* currModel, P6::MyVector currColor) : PhysicsParticle(particle), model(currModel), Color(currColor) 
-	{
-		
-	};
+	RenderParticle(std::string name, P6::MyParticle* particle, Model* currModel, P6::MyVector currColor) : Name(name), PhysicsParticle(particle), model(currModel), Color(currColor) {};
 
 	void Draw();
 
-	/*It checks if the lifespan should be deducted by 1 or not yet*/
-	void checkLifespan(float value);
+	int recordTime(float value, int rank);
+
+	P6::MyVector randomAcceleration();
+
+
+
 };
 

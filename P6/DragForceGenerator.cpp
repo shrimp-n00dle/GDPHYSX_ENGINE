@@ -1,6 +1,6 @@
 #include "DragForceGenerator.h"
 
-void P6::DragForceGenerator::updateForce(EngineParticle* particle, float time)
+void P6::DragForceGenerator::updateForce(MyParticle* particle, float time)
 {
 	MyVector force = MyVector(0, 0, 0);
 	

@@ -1,7 +1,7 @@
 #include "GravityForceGenerator.h"
 
 
-void P6::GravityForceGenerator::updateForce(EngineParticle* particle, float time)
+void P6::GravityForceGenerator::updateForce(MyParticle* particle, float time)
 {
 	if (particle->mass <= 0) return;
 

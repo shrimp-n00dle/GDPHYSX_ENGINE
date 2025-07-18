@@ -11,13 +11,14 @@
 
 /*P6 and Custom Classes inclusion*/
 #include "P6/MyVector.h"
-#include "P6/EngineParticle.h"
+#include "P6/MyParticle.h"
 #include "P6/PhysicsWorld.h"
 #include "P6/DragForceGenerator.h"
 
 #include "RenderParticle.h"
 #include "Classes/Model.h"
 #include "Classes/Shader.h"
+#include "ContactResolver.h"
 
 //Import the libraries
 #include <chrono>
@@ -36,78 +37,6 @@ bool isPerspective = true; // Start with perspective
 
 // Pause variable
 bool isPaused = false;
-
-// Fountain variables
-float particleSpawnRate = 5.0f; // particles per second
-float timeSinceLastSpawn = 0.0f;
-int maxParticles = 100; // maximum particles alive at once
-int particlesPerBurst = 1; // how many particles to spawn at once
-
-// Function to create a single particle
-RenderParticle* createParticle(P6::PhysicsWorld* pWorld, Model* model)
-{
-    /*RANDOM GENERATOR*/
-    //color
-    float color = rand() % 10;
-    float color2 = rand() % 10;
-    float color3 = rand() % 10;
-
-    // More fountain-like velocity (upward with some spread)
-    float veloX = ((rand() % 100) / 100.0f - 0.5f) * 2.0f; // -1 to 1
-    float veloY = (rand() % 50 + 50) / 100.0f * 8.0f + 2.0f; // 2 to 6 (upward)
-    float veloZ = ((rand() % 100) / 100.0f - 0.5f) * 2.0f; // -1 to 1
-
-    // Gravity-like acceleration
-    float accelX = 0.0f;
-    float accelY = -9.81f; // gravity
-    float accelZ = 0.0f;
-
-    P6::EngineParticle* p = new P6::EngineParticle();
-    p->Velocity = P6::MyVector(veloX, veloY, veloZ);
-    p->Position = P6::MyVector(0, -0.7f, 0); // spawn at bottom
-    p->Acceleration = P6::MyVector(accelX, accelY, accelZ);
-
-    P6::ForceGenerator* f = new P6::ForceGenerator;
-    p->addForce(P6::MyVector(0, 0, 0)); // Let gravity handle the force
-
-    //radius
-    p->radius = (float)((float)(rand() % 10 + 2) / (float)(rand() % 10 + 2)) / 10;
-
-    //lifespan (shorter for fountain effect)
-    p->lifespan = (rand() % 30 + 10) / 10.0f; // 1.0 to 4.0 seconds
-
-    f->updateForce(p, 0.1f);
-    pWorld->forceRegistry.Add(p, f);
-    pWorld->addParticle(p);
-
-    /*Adding in the particles, models and thier colors*/
-    RenderParticle* rp = new RenderParticle(p, model, P6::MyVector(color - 3, color2, color3 - 3));
-    return rp;
-}
-
-// Function to clean up dead particles
-void cleanupDeadParticles(std::list<RenderParticle*>& rParticleList)
-{
-    auto it = rParticleList.begin();
-    while (it != rParticleList.end())
-    {
-        if ((*it)->PhysicsParticle->lifespan <= 0.0f || (*it)->PhysicsParticle->Position.y < -5.0f)
-        {
-            // Mark particle for destruction (PhysicsWorld will handle removal automatically)
-            (*it)->PhysicsParticle->Destroy();
-
-            // Clean up render particle
-            delete (*it);
-
-            // Remove from render list
-            it = rParticleList.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
-}
 
 // Input callback function
 void processInput(GLFWwindow* window, float deltaTime)
@@ -144,18 +73,6 @@ void processInput(GLFWwindow* window, float deltaTime)
         glm::vec4 newOffset = rotation * glm::vec4(offset, 1.0f);
         cameraPos = cameraTarget + glm::vec3(newOffset);
         std::cout << "D pressed - Camera rotated right" << std::endl;
-    }
-
-    // Control spawn rate with Q/E keys
-    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-    {
-        particleSpawnRate = std::max(1.0f, particleSpawnRate - 5.0f * deltaTime);
-        std::cout << "Spawn rate: " << particleSpawnRate << " particles/sec" << std::endl;
-    }
-    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-    {
-        particleSpawnRate = std::min(20.0f, particleSpawnRate + 5.0f * deltaTime);
-        std::cout << "Spawn rate: " << particleSpawnRate << " particles/sec" << std::endl;
     }
 
     // --- Projection switching (1: Orthographic, 2: Perspective) ---
@@ -237,9 +154,34 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
 
-    // Get spawn rate from user
-    std::cout << "Enter particle spawn rate (particles per second): ";
-    std::cin >> particleSpawnRate;
+    /*PARTICLE IMPLEMETATION - BUNGEE*/
+    P6::MyParticle pBungeeAnchor = P6::MyParticle();
+    pBungeeAnchor.Position = P6::MyVector(-0.2, 0.5, 0);
+    pBungeeAnchor.mass = 10;
+    pBungeeAnchor.restitution = 1;
+    pBungeeAnchor.radius = 0.2f;
+    pBungeeAnchor.Velocity = P6::MyVector(0, 0, 0);
+
+    pWorld.addParticle(&pBungeeAnchor);
+    RenderParticle rBunA = RenderParticle("Pholder", &pBungeeAnchor, &model, P6::MyVector(0.0f, 0.0f, 1.0f));
+    rBunA.model->scaleModel(P6::MyVector(pBungeeAnchor.radius, pBungeeAnchor.radius, pBungeeAnchor.radius));
+    rParticleList.push_back(&rBunA);
+
+    P6::MyParticle particle = P6::MyParticle();
+    particle.Position = P6::MyVector(-0.2, -0.5, 0);
+    particle.mass = 15;
+    particle.radius = 0.2f;
+    particle.restitution = 1;
+    particle.addForce(P6::MyVector(0, 0.1, 0).scalarMultiplication(1.0));
+    particle.Velocity = P6::MyVector(0, 0.1, 0);
+    pWorld.addParticle(&particle);
+
+    // P6::Bungee pBungee = P6::Bungee(&pBungeeAnchor, 0.5, 0.25);
+    // pWorld.forceRegistry.Add(&particle, &pBungee);
+
+    RenderParticle rParticle = RenderParticle("P1", &particle, &model, P6::MyVector(4.0f, 0.0f, 0.0f));
+    rParticle.model->scaleModel(P6::MyVector(particle.radius, particle.radius, particle.radius));
+    rParticleList.push_back(&rParticle);
 
     /*TIME IMPLEMENTATION*/
     using clock = std::chrono::high_resolution_clock;
@@ -282,24 +224,9 @@ int main(void)
         if (!isPaused) // Only update timer and physics when not paused
         {
             timer += timeAdd;
-            timeSinceLastSpawn += deltaTime;
         }
 
         prev_time = curr_time;
-
-        // Spawn new particles continuously (fountain effect)
-        if (!isPaused && timeSinceLastSpawn >= (1.0f / particleSpawnRate))
-        {
-            if (rParticleList.size() < maxParticles)
-            {
-                for (int i = 0; i < particlesPerBurst; i++)
-                {
-                    RenderParticle* newParticle = createParticle(&pWorld, &model);
-                    rParticleList.push_back(newParticle);
-                }
-            }
-            timeSinceLastSpawn = 0.0f;
-        }
 
         //add dur to last iteration to the time since our last frame
         if (!isPaused) // Only update physics when not paused
@@ -313,12 +240,6 @@ int main(void)
                 curr_ns -= curr_ns;
                 pWorld.Update((float)ms.count() / 1000);
             }
-        }
-
-        // Clean up dead particles
-        if (!isPaused)
-        {
-            cleanupDeadParticles(rParticleList);
         }
 
         /* Render here */
@@ -353,38 +274,9 @@ int main(void)
         for (std::list<RenderParticle*>::iterator i = rParticleList.begin();
             i != rParticleList.end(); i++)
         {
-            /*Check lifespan first
-            if the lifespan is greater than 0 and the program is not paused*/
-            if ((*i)->PhysicsParticle->lifespan > 0.0f && !isPaused) // Only update lifespan when not paused
-            {
-                //Method checks if a second has a passed by, it will set the value of bSecond to true if thats the case
-                (*i)->checkLifespan(((float)timer.count() / 1000));
-
-
-                if ((*i)->PhysicsParticle->bSecond)
-                {
-                    //set it to false first to avoid repeition
-                    (*i)->PhysicsParticle->bSecond = false;
-
-                    //destory and remove particle from the list
-                    if ((*i)->PhysicsParticle->lifespan < 1.0f) (*i)->PhysicsParticle->Destroy();
-
-                    //reset the timer again
-                    timer -= timer;
-                }
-            }
 
             /*Draw the results*/
             (*i)->Draw();
-        }
-
-        // Display particle count
-        static float displayTimer = 0.0f;
-        displayTimer += deltaTime;
-        if (displayTimer >= 1.0f) // Update every second
-        {
-            std::cout << "Active particles: " << rParticleList.size() << " | Spawn rate: " << particleSpawnRate << "/sec" << std::endl;
-            displayTimer = 0.0f;
         }
 
         /* Swap front and back buffers */

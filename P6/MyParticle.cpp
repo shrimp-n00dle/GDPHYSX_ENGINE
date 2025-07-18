@@ -28,7 +28,7 @@ void  P6::MyParticle::updateVelocity(float time)
 
 }
 
-void P6::MyParticle::updateParticle(float time) 
+void P6::MyParticle::updateParticle(float time)
 {
 	updatePosition(time);
 
@@ -49,9 +49,9 @@ void P6::MyParticle::addForce(MyVector force)
 
 void P6::MyParticle::resetForce()
 {
-	accumulatedForce = MyVector(0,0,0);
+	accumulatedForce = MyVector(0, 0, 0);
 
-	Acceleration = MyVector(0,0,0);
+	Acceleration = MyVector(0, 0, 0);
 }
 
 float P6::MyParticle::randomAccel()

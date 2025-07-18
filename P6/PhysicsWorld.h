@@ -1,29 +1,46 @@
 #pragma once
 #include <list>
-#include "EngineParticle.h"
+#include "MyParticle.h"
 #include "ForceRegistry.h"
+#include "ParticleContact.h"
 #include "GravityForceGenerator.h"
+#include "../ContactResolver.h"
+#include "ParticleLink.h"
+#include <vector>
 
 namespace P6
 {
 	class PhysicsWorld
 	{
-		public:
+	public:
 
-			ForceRegistry forceRegistry;
+		std::list<ParticleLink*> Links;
+		std::vector<ParticleContact*> Contacts;
 
-			std::list<EngineParticle*> particleList;
+		void AddContact(MyParticle* p1, MyParticle* p2, float restitution, MyVector contactNormal, float depth);
+		ForceRegistry forceRegistry;
 
-			void addParticle(EngineParticle* particle);
+		std::list<MyParticle*> particleList;
 
-			//Calls the UPDATE OF ALL
-			void Update(float time);
+		void addParticle(MyParticle* particle);
 
-		private:
-			void updateParticleList();
+		//Calls the UPDATE OF ALL
+		void Update(float time);
 
-			GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -9.8f, 0));
-			//GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, 0, 0));
+	private:
+		void updateParticleList();
+
+		//GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -9.8, 0));
+		GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, 0, 0));
+
+	protected:
+
+		ContactResolver contactResolver = ContactResolver(20);
+
+		void generateContacts();
+
+		void getOverlaps();
+
 
 	};
 

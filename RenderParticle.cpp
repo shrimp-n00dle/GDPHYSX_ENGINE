@@ -5,10 +5,12 @@ void RenderParticle::Draw()
 	if (!PhysicsParticle->IsDestroyed())
 	{
 		/*COLOR*/
+		//model or particle? MODEL MUNA
 		model->setColor(Color);
 
 		/*POSITION*/
 		model->moveModel(PhysicsParticle->Position);
+		//std::cout << PhysicsParticle->Position.x << "  " << PhysicsParticle->Position.y << "  " << PhysicsParticle->Position.z << "  " << std::endl;
 
 		/*SCALE*/
 		model->scaleModel(P6::MyVector(PhysicsParticle->radius, PhysicsParticle->radius, PhysicsParticle->radius));
@@ -17,17 +19,19 @@ void RenderParticle::Draw()
 	}
 }
 
-void RenderParticle::checkLifespan(float value)
+int RenderParticle::recordTime(float value, int rank)
 {
-	//the float value holds the time passing 
-
-	//if the time is more than a second, deduct 1 by the lifepsan of the particle, resetting of timer is called in Main.cpp
-	if (value >= 1.0f)
+	if (!bRecorded)
 	{
-		PhysicsParticle->lifespan -= value;
-		PhysicsParticle->bSecond = true;
+		rank++;
+		std::cout << Name << "Rank: " << rank << " ,total time: " << value << "seconds" << std::endl;
+
+		bRecorded = true;
+
+
 	}
 
+	return rank;
 }
 
 

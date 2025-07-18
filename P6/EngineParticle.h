@@ -13,6 +13,9 @@ namespace P6
 
 		float lifespan = 0;
 
+		float restitution = 1.0f;
+
+
 		MyVector Acceleration;
 
 		MyVector Position;
@@ -27,11 +30,13 @@ namespace P6
 
 		float radius = 0.0f;
 		float mass = 0.1f;
-		MyVector accumulatedForce;
 
 
 	protected:
 		bool bDestroy = false;
+
+		//force gathered before the FIXED update
+		MyVector accumulatedForce = MyVector(0, 0, 0);
 
 
 		/*METHODS*/

@@ -2,10 +2,13 @@
 
 float P6::MyVector::Magnitude()
 {
-	magnitude = sqrtf(
-						(sqrtf(x) + sqrtf(y) + sqrt(z))
-						);
+	magnitude = (sqrtf(x * x) + sqrtf(y * y) + sqrt(z * z));
+	return magnitude;
+}
 
+float P6::MyVector::SqMagnitude()
+{
+	magnitude = ((x * x) + (y * y) + (z * z));
 	return magnitude;
 }
 
@@ -31,15 +34,16 @@ P6::MyVector P6::MyVector::componentProduct(const MyVector rhs)
 
 float P6::MyVector::scalarProduct(const MyVector rhs)
 {
-	float product = (this->x * rhs.x) + (this->y * rhs.y) + (this->z * rhs.z);
+	//float product = (this->x * rhs.x) + (this->y * rhs.y) + (this->z * rhs.z);
 
-	return product;
+	return (this->x * rhs.x) + (this->y * rhs.y) + (this->z * rhs.z);
+	//product;
 }
 
 P6::MyVector P6::MyVector::vectorProduct(const MyVector rhs)
 {
-	MyVector product (
-		(this->y * rhs.z) - (this->z * rhs.y), 
+	MyVector product(
+		(this->y * rhs.z) - (this->z * rhs.y),
 		(this->z * rhs.x) - (this->x * rhs.z),
 		(this->x * rhs.y) - (this->y * rhs.x)
 	);

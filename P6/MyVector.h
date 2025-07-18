@@ -8,61 +8,78 @@ namespace P6
 {
 	class MyVector
 	{
-		public:
-			float x, y, z;
+	public:
+		float x, y, z;
 
-			/*Constructor*/
-			MyVector() : x(0), y(0), z(0) {};
+		/*Constructor*/
+		MyVector() : x(0), y(0), z(0) {};
 
-			/*Component Constructor*/
-			MyVector(const float _x, const float _y, const float _z) : x(_x), y(_y), z(_z) {}
+		/*Component Constructor*/
+		MyVector(const float _x, const float _y, const float _z) : x(_x), y(_y), z(_z) {}
 
-			/*Explicit type casting*/
-			explicit operator glm::vec3() const { return glm::vec3(x, y, z); }
+		/*Explicit type casting*/
+		explicit operator glm::vec3() const { return glm::vec3(x, y, z); }
 
-			/*Magnitude*/
-			float Magnitude();
-			float magnitude;
+		/*Magnitude*/
+		float Magnitude();
+		float SqMagnitude();
+		float magnitude = 0.0f;
 
-			/*Direction / Normalize*/
-			MyVector Direction();
+		/*Direction / Normalize*/
+		MyVector Direction();
 
-			/*Addition*/
-			MyVector operator+ (const MyVector rhs)
-			{
-				MyVector sum(this->x + rhs.x, this->y + rhs.y, this->z + rhs.z);
+		/*Addition*/
+		MyVector operator+ (const MyVector rhs)
+		{
+			MyVector sum(this->x + rhs.x, this->y + rhs.y, this->z + rhs.z);
 
-				return sum;
-			}
+			return sum;
+		}
 
-			/*[+=] Addition*/
-			void operator+= (const MyVector rhs)
-			{
-				this->x += rhs.x;
-				this->y += rhs.y;
-				this->z += rhs.z;
+		//shift ctrl /
+		/*MyVector operator+ (float rhs)
+		{
+			MyVector sum(this->x + rhs, this->y + rhs, this->z + rhs);
 
-			}
+			return sum;
+		}*/
 
-			/*Subtraction*/
-			MyVector operator- (const MyVector rhs)
-			{
-				MyVector difference(this->x - rhs.x, this->y - rhs.y, this->z - rhs.z);
+		/*[+=] Addition*/
+		void operator+= (const MyVector rhs)
+		{
+			this->x += rhs.x;
+			this->y += rhs.y;
+			this->z += rhs.z;
 
-				return difference;
-			}
+		}
 
-			/*Scalar Multiplication || the * opertator when dealing with MyVector multiplication*/
-			MyVector scalarMultiplication(const float value);
-			
-			/*Component Product*/
-			MyVector componentProduct(const MyVector rhs);
+		/*Subtraction*/
+		MyVector operator- (const MyVector rhs)
+		{
+			MyVector difference(this->x - rhs.x, this->y - rhs.y, this->z - rhs.z);
 
-			/*Scalar Product / Dot Product*/
-			float scalarProduct(const MyVector rhs);
+			return difference;
+		}
 
-			/*Vector Product / Cross Product*/
-			MyVector vectorProduct(const MyVector rhs);
+		/*Subtraction*/
+		MyVector operator-= (const MyVector rhs)
+		{
+			MyVector difference(this->x -= rhs.x, this->y -= rhs.y, this->z -= rhs.z);
+
+			return difference;
+		}
+
+		/*Scalar Multiplication*/
+		MyVector scalarMultiplication(const float value);
+
+		/*Component Product*/
+		MyVector componentProduct(const MyVector rhs);
+
+		/*Scalar Product / Dot Product*/
+		float scalarProduct(const MyVector rhs);
+
+		/*Vector Product / Cross Product*/
+		MyVector vectorProduct(const MyVector rhs);
 
 	};
 

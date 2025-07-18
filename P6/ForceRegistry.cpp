@@ -1,7 +1,7 @@
 #include "ForceRegistry.h"
 
 
-void P6::ForceRegistry::Add(EngineParticle* particle, ForceGenerator* generator)
+void P6::ForceRegistry::Add(MyParticle* particle, ForceGenerator* generator)
 {
 	ParticleForceRegistry toAdd;
 	toAdd.particle = particle;
@@ -17,7 +17,7 @@ void P6::ForceRegistry::Clear()
 
 
 
-void P6::ForceRegistry::Remove(EngineParticle* particle, ForceGenerator* generator)
+void P6::ForceRegistry::Remove(MyParticle* particle, ForceGenerator* generator)
 {
 
 	Registry.remove_if

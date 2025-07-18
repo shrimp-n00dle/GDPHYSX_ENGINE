@@ -1,6 +1,6 @@
 #pragma once
 
-#include "EngineParticle.h"
+#include "MyParticle.h"
 #include "ForceGenerator.h"
 
 #include "list"
@@ -12,8 +12,8 @@ namespace P6
 	{
 	public:
 		
-		void Add(EngineParticle* particle, ForceGenerator* generator);
-		void Remove(EngineParticle* particle, ForceGenerator* generator);
+		void Add(MyParticle* particle, ForceGenerator* generator);
+		void Remove(MyParticle* particle, ForceGenerator* generator);
 		void Clear();
 		void updateForces(float time);
 	protected:
@@ -22,7 +22,7 @@ namespace P6
 		Does not have any other use*/
 		struct ParticleForceRegistry
 		{
-			EngineParticle* particle;
+			MyParticle* particle;
 			ForceGenerator* generator;
 		};
 
