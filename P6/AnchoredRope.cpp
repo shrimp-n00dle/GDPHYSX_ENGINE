@@ -12,15 +12,10 @@ void P6::AnchoredRope::updateForce(MyParticle* particle, float time)
 		//Get remainder of the rope
 		float displacement = distance - restLength;
 
-		//Get direction of rope
+		//Get new constrained position and velocity of particle
 		MyVector correctionDir = ropePos.Direction();
-
-
-		particle->Position = anchorPoint + correctionDir.scalarMultiplication(restLength);
-
 		float RopeVelocity = particle->Velocity.scalarProduct(correctionDir);
 		particle->Velocity = (particle->Velocity - correctionDir.scalarMultiplication(RopeVelocity));
-
 
 	}
 

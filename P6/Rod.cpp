@@ -24,7 +24,7 @@ P6::ParticleContact* P6::Rod::GetContact()
 
 	if (currLen > length)
 	{
-		//ret->contactNormal = dir;
+		ret->contactNormal = dir;
 
 		//depth must always be positive to resolve intepenetration
 		ret->depth = currLen - length;
