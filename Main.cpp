@@ -15,6 +15,7 @@
 #include "P6/PhysicsWorld.h"
 #include "P6/DragForceGenerator.h"
 #include "P6/Rod.h"  // <-- ADD THIS LINE - This is what's missing!
+#include "P6/AnchoredRope.h"
 
 #include "RenderParticle.h"
 #include "Classes/Model.h"
@@ -169,6 +170,13 @@ int main(void)
     const float PARTICLE_MASS = 1.0f;
     const float ROD_HEIGHT = 0.8f;  // Height of anchor points
 
+    //FIX Remove Temp variables
+    const float TEMP_PART_MASS = 0.01f;
+    const float TEMP_PART_RAD = 0.08f;
+    float sizeFloat = 5.0f;
+    P6::MyVector tempSize = P6::MyVector(sizeFloat, sizeFloat, sizeFloat);
+
+
     // Create anchor points (fixed points at the top)
     for (int i = 0; i < NUM_PENDULUMS; i++)
     {
@@ -186,6 +194,7 @@ int main(void)
         // FIXED: Don't add anchors to physics world - they should be completely fixed
         // pWorld.addParticle(anchor);
         anchorParticles.push_back(anchor);
+
 
         // Create render particle for anchor (small, gray)
         RenderParticle* rAnchor = new RenderParticle(
@@ -207,8 +216,8 @@ int main(void)
             ROD_HEIGHT - PENDULUM_LENGTH,  // Hang down from anchor
             0
         );
-        particle->mass = PARTICLE_MASS;
-        particle->radius = PARTICLE_RADIUS;
+        particle->mass = TEMP_PART_MASS; // FIX Replace with PARTICLE_MASS
+        particle->radius = TEMP_PART_RAD; // FIX Replace with PARTICLE_RADIUS
         particle->restitution = 0.9f;  // High restitution for good energy transfer
         particle->Velocity = P6::MyVector(0, 0, 0);
 
@@ -249,8 +258,14 @@ int main(void)
             << "," << pendulumParticles[i]->Position.y << ")" << std::endl;
     }
 
+// Temp Initalization of particles
     // Give the first pendulum an initial velocity to start the motion
-    pendulumParticles[0]->Velocity = P6::MyVector(1.5f, 0.0f, 0.0f);  // Reduced initial velocity
+    // FIX USE THIS pendulumParticles[0]->Velocity = P6::MyVector(1.5f, 0.0f, 0.0f);  // Reduced initial velocity
+    pendulumParticles[0]->Velocity = P6::MyVector(-0.4f, 0.0f, 0.0f);  // Reduced initial velocity
+    
+    P6::AnchoredRope aSpring = P6::AnchoredRope(P6::MyVector(anchorParticles[0]->Position.x, anchorParticles[0]->Position.y, 0), 1, 0.6);
+    pWorld.forceRegistry.Add(pendulumParticles[0], &aSpring);
+
 
     /*TIME IMPLEMENTATION*/
     using clock = std::chrono::high_resolution_clock;
@@ -310,6 +325,10 @@ int main(void)
                 //Reset
                 curr_ns -= curr_ns;
                 pWorld.Update((float)ms.count() / 1000);
+
+                //FIX REMOVE THIS console out
+                std::cout << "x: " << pendulumParticles[0]->Position.x << " y: " << pendulumParticles[0]->Position.y << std::endl;
+
             }
         }
 
@@ -354,6 +373,8 @@ int main(void)
 
         /* Poll for and process events */
         glfwPollEvents(); // <-- This is required for input to work!
+
+
     }
 
     /*Clean the vertex annd buffers*/
