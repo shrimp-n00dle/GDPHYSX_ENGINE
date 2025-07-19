@@ -8,8 +8,6 @@ namespace P6
 	class ParticleLink
 	{
 	public:
-		//particles[0] = anchorParticles
-		//particles[1] = pendulumParticles
 		MyParticle* particles[2];
 
 		virtual ParticleContact* GetContact() { return nullptr; };

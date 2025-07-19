@@ -150,7 +150,6 @@
     <ClCompile Include="P6\ParticleSpring.cpp" />
     <ClCompile Include="P6\PhysicsWorld.cpp" />
     <ClCompile Include="P6\Rod.cpp" />
-    <ClCompile Include="P6\AnchoredRope.cpp" />
     <ClCompile Include="RenderParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,7 +168,6 @@
     <ClInclude Include="P6\ParticleSpring.h" />
     <ClInclude Include="P6\PhysicsWorld.h" />
     <ClInclude Include="P6\Rod.h" />
-    <ClInclude Include="P6\AnchoredRope.h" />
     <ClInclude Include="RenderParticle.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
