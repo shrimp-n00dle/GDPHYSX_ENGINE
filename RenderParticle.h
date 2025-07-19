@@ -28,6 +28,8 @@ public:
 		
 	}
 
+	void DrawLine(std::string name, P6::MyParticle* anchor, P6::MyParticle* particle);
+
 	RenderParticle(std::string name, P6::MyParticle* particle, Model* currModel, P6::MyVector currColor) : Name(name), PhysicsParticle(particle), model(currModel), Color(currColor) {};
 
 	void Draw();

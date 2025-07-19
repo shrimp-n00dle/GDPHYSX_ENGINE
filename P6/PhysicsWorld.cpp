@@ -89,7 +89,7 @@ void P6::PhysicsWorld::getOverlaps()
 
 			double mag2 = mag2Vector.SqMagnitude();
 			double rad = (*a)->radius + (*b)->radius;
-			double rad2 = rad * rad;
+			float rad2 = rad * rad * rad * rad * rad * rad;
 
 			if (mag2 <= rad2)
 			{
