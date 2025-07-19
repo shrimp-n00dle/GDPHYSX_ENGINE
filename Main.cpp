@@ -265,7 +265,8 @@ int main(void)
     
     P6::AnchoredRope aSpring = P6::AnchoredRope(P6::MyVector(anchorParticles[0]->Position.x, anchorParticles[0]->Position.y, 0), 1, 0.6);
     pWorld.forceRegistry.Add(pendulumParticles[0], &aSpring);
-
+    //RenderParticle* rRope = new RenderParticle("Rope0Anchor")
+    
 
     /*TIME IMPLEMENTATION*/
     using clock = std::chrono::high_resolution_clock;

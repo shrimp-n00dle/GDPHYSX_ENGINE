@@ -53,6 +53,9 @@ class Model
 		void bind();
 		void cleanUp();
 
+		void drawElemetsTriagnle();
+		void drawElementsLine();
+
 		/*Color*/
 		void setColor(P6::MyVector newColor);
 		

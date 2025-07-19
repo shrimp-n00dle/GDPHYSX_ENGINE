@@ -60,10 +60,6 @@ void Model::renderModel()
    /*Triangle Rendering*/
       //Call binder for renderer
    glBindVertexArray(VAO);
-
-   //instead of glDrawArrays(GL_TRIANGLES,0,3) you can simplify things by replacing it with the one below
-   /*parameters - type of primitive to use, number of vertices, datat type of index*/
-   glDrawElements(GL_TRIANGLES, mesh_indicies.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Model::bind()
@@ -129,6 +125,18 @@ void Model::cleanUp()
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
+}
+
+void Model::drawElemetsTriagnle()
+{
+    //instead of glDrawArrays(GL_TRIANGLES,0,3) you can simplify things by replacing it with the one below
+   /*parameters - type of primitive to use, number of vertices, datat type of index*/
+    glDrawElements(GL_TRIANGLES, mesh_indicies.size(), GL_UNSIGNED_INT, 0);
+}
+
+void Model::drawElementsLine()
+{
+    glDrawElements(GL_LINES, mesh_indicies.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Model::setColor(P6::MyVector newColor)
