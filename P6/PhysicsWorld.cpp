@@ -87,18 +87,18 @@ void P6::PhysicsWorld::getOverlaps()
 
 			MyVector mag2Vector = (*a)->Position - (*b)->Position;
 
-			float mag2 = mag2Vector.SqMagnitude();
-			float rad = (*a)->radius + (*b)->radius;
-			float rad2 = rad * rad;
+			double mag2 = mag2Vector.SqMagnitude();
+			double rad = (*a)->radius + (*b)->radius;
+			double rad2 = rad * rad;
 
 			if (mag2 <= rad2)
 			{
 				std::cout << "COLLISION DETECTED" << std::endl;
 				MyVector dir = mag2Vector.Direction();
-				float r = rad2 - mag2;
-				float depth = sqrt(r);
+				double r = rad2 - mag2;
+				double depth = sqrt(r);
 
-				float restitution = fmin((*a)->restitution, (*b)->restitution);
+				double restitution = fmin((*a)->restitution, (*b)->restitution);
 
 				AddContact(*a, *b, restitution, dir, depth);
 			}
