@@ -136,7 +136,7 @@ void Model::drawElemetsTriagnle()
 
 void Model::drawElementsLine()
 {
-    glDrawElements(GL_LINES, mesh_indicies.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_LINE_STRIP, mesh_indicies.size(), GL_UNSIGNED_INT, 0);
 }
 
 void Model::setColor(P6::MyVector newColor)
