@@ -8,7 +8,6 @@
 class RenderParticle
 {
 public:
-
 	/*ATTRIBUTES*/
 	P6::MyParticle* PhysicsParticle;
 
@@ -20,15 +19,13 @@ public:
 
 	bool bRecorded = false;
 
+
 public:
 	/*METHODS*/
 	RenderParticle(std::string name, P6::MyParticle* particle, Model* currModel) : Name(name), PhysicsParticle(particle), model(currModel)
 	{
 		Color = P6::MyVector(1, 1, 1);
-		
 	}
-
-	void DrawLine(std::string name, P6::MyParticle* anchor, P6::MyParticle* particle);
 
 	RenderParticle(std::string name, P6::MyParticle* particle, Model* currModel, P6::MyVector currColor) : Name(name), PhysicsParticle(particle), model(currModel), Color(currColor) {};
 
@@ -37,8 +34,6 @@ public:
 	int recordTime(float value, int rank);
 
 	P6::MyVector randomAcceleration();
-
-
 
 };
 

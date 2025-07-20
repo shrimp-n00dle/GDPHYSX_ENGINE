@@ -16,6 +16,7 @@ void RenderParticle::Draw()
 		model->scaleModel(P6::MyVector(PhysicsParticle->radius, PhysicsParticle->radius, PhysicsParticle->radius));
 
 		model->renderModel();
+		model->drawElemetsTriagnle();
 	}
 }
 
@@ -33,9 +34,3 @@ int RenderParticle::recordTime(float value, int rank)
 
 	return rank;
 }
-
-void RenderParticle::DrawLine(std::string name, P6::MyParticle* anchor, P6::MyParticle* particle)
-{
-
-}
-

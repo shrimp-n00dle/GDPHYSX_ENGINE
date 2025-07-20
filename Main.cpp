@@ -18,6 +18,7 @@
 #include "P6/AnchoredRope.h"
 
 #include "RenderParticle.h"
+//#include "ComplexParticle.h"
 #include "Classes/Model.h"
 #include "Classes/Shader.h"
 #include "ContactResolver.h"
@@ -156,6 +157,7 @@ int main(void)
     P6::PhysicsWorld pWorld = P6::PhysicsWorld();
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
+    //std::list<ComplexParticle*> rComplexParticleList;
 
     /*PENDULUM IMPLEMENTATION*/
     std::vector<P6::MyParticle*> pendulumParticles;
@@ -263,9 +265,21 @@ int main(void)
     // FIX USE THIS pendulumParticles[0]->Velocity = P6::MyVector(1.5f, 0.0f, 0.0f);  // Reduced initial velocity
     pendulumParticles[0]->Velocity = P6::MyVector(-0.4f, 0.0f, 0.0f);  // Reduced initial velocity
     
-    P6::AnchoredRope aSpring = P6::AnchoredRope(P6::MyVector(anchorParticles[0]->Position.x, anchorParticles[0]->Position.y, 0), 1, 0.6);
-    pWorld.forceRegistry.Add(pendulumParticles[0], &aSpring);
-    //RenderParticle* rRope = new RenderParticle("Rope0Anchor")
+    int temp_i = 0;
+    //Declaration of rope vars
+    /*P6::MyParticle* ropeAnchor = anchorParticles[temp_i];
+    P6::MyParticle* ropeEnd = pendulumParticles[temp_i];
+    P6::MyVector colorWhite = P6::MyVector(1.0f, 1.0f, 1.0f);
+    RenderParticle* rParticleAnchor = new RenderParticle("RopeAnchor" + std::to_string(temp_i), ropeAnchor, &model, colorWhite);
+    
+    ComplexParticle* rComplexParticle = new ComplexParticle();*/
+
+
+    //Assigning rope values
+    P6::AnchoredRope aRope = P6::AnchoredRope(P6::MyVector(anchorParticles[0]->Position.x, anchorParticles[0]->Position.y, 0), 1, 0.6);
+    //rComplexParticle->PushBack(ropeAnchor);
+    pWorld.forceRegistry.Add(pendulumParticles[0], &aRope);
+    
     
 
     /*TIME IMPLEMENTATION*/
