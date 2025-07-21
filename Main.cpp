@@ -273,7 +273,7 @@ int main(void)
     P6::MyVector colorWhite = P6::MyVector(1.0f, 1.0f, 1.0f);
     
     RenderParticle* rParticleAnchor = new RenderParticle("RopeAnchor" + std::to_string(temp_i), ropeAnchor, &model, colorWhite);
-    ComplexParticle* rComplexParticle = new ComplexParticle();
+    ComplexParticle* rComplexParticle = new ComplexParticle("Rope" + std::to_string(temp_i), );
 
 
     //Assigning rope values

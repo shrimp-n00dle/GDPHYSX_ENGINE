@@ -1,10 +1,10 @@
 #pragma once
-#include "RenderParticle.h"
 #include "P6/MyVector.h"
 #include "P6/MyParticle.h"
+#include "Classes/PrimitiveModel.h"
 class BasicParticle {
 public:
-	enum Type { PARTICLE = 0, LINE_ANCHOR = 1, LINE_END = 2 };
+	enum Type { PARTICLE = 0, LINE = 1, LINE_END = 2 };
 
 	P6::MyParticle* PhysicsParticle;
 
@@ -37,18 +37,21 @@ class ComplexParticle {
 	Node* tail;
 
 	std::string Name;
-	Model* model;
+	PrimitiveModel* model;
 	P6::MyVector color;
+	int segments;
 
 public:
-	ComplexParticle(std::string name, Model* currModel) :  Name(name), model(currModel) {
+	ComplexParticle(std::string name, PrimitiveModel* currModel) :  Name(name), model(currModel) {
 		head = tail = nullptr;
 		color = P6::MyVector(1, 1, 1);
+		segments = 0;
 	}
 
-	ComplexParticle(std::string name, Model* currModel, P6::MyVector currColor) : Name(name), model(currModel), color(currColor) 
+	ComplexParticle(std::string name, PrimitiveModel* currModel, P6::MyVector currColor) : Name(name), model(currModel), color(currColor)
 	{
 		head = tail = nullptr;
+		segments = 0;
 	}
 	
 	void PushBack(BasicParticle* particle);

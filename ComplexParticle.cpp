@@ -13,6 +13,7 @@ void ComplexParticle::PushBack(BasicParticle* particle)
 		newNode->prev = tail;
 		tail = newNode;
 	}
+	segments++;
 }
 
 void ComplexParticle::DeleteNode(BasicParticle* particle)
@@ -38,10 +39,12 @@ void ComplexParticle::DeleteNode(BasicParticle* particle)
 				curr->next->prev = curr->prev;
 			}
 			delete curr;
+			segments--;
 			return;
 		}
 		curr = curr->next;
 	}
+
 }
 
 ComplexParticle::~ComplexParticle()
@@ -58,23 +61,30 @@ void ComplexParticle::Draw()
 {
 	//iterate over all basic particles
 	Node* curr = head;
-	
 
-	if (!curr->data->PhysicsParticle->IsDestroyed())
-	{
-		/*COLOR*/
-		//model or particle? MODEL MUNA
-		model->setColor(Color);
-
-		/*POSITION*/
-		model->moveModel(PhysicsParticle->Position);
-		//std::cout << PhysicsParticle->Position.x << "  " << PhysicsParticle->Position.y << "  " << PhysicsParticle->Position.z << "  " << std::endl;
-
-		/*SCALE*/
-		model->scaleModel(P6::MyVector(PhysicsParticle->radius, PhysicsParticle->radius, PhysicsParticle->radius));
-
-		model->renderModel();
-		model->drawElemetsTriagnle();
+	if (curr == nullptr) {
+		std::cerr << "Complex Particle Draw nullptr" << std::endl;
+		return;
 	}
-	
+
+	model->setColor(color);
+	while (curr != nullptr) {
+		P6::MyParticle* currParticle = curr->data->PhysicsParticle;
+		if (!currParticle->IsDestroyed() && curr != nullptr)
+		{
+
+			/*POSITION*/
+			//model->moveModel(currParticle->Position);
+			//std::cout << PhysicsParticle->Position.x << "  " << PhysicsParticle->Position.y << "  " << PhysicsParticle->Position.z << "  " << std::endl;
+
+			model->renderModel();
+			if (curr->data->particleType == BasicParticle::PARTICLE) {
+				model->drawElemetsTriagnle();
+			}
+			else if (curr->data->particleType == BasicParticle::LINE) {
+				model->drawElementsLine();
+			}
+		}
+		curr = curr->next;
+	}
 }

@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="Classes\Model.cpp" />
     <ClCompile Include="Classes\Shader.cpp" />
+    <ClCompile Include="Classes\PrimitiveModel.cpp" />
     <ClCompile Include="ComplexParticle.cpp" />
     <ClCompile Include="ContactResolver.cpp" />
     <ClCompile Include="glad.c" />
@@ -157,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="Classes\Model.h" />
     <ClInclude Include="Classes\Shader.h" />
+    <ClInclude Include="Classes\PrimitiveModel.h" />
     <ClInclude Include="ContactResolver.h" />
     <ClInclude Include="ComplexParticle.h" />
     <ClInclude Include="P6\DragForceGenerator.h" />
