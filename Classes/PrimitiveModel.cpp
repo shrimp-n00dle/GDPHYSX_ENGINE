@@ -93,7 +93,7 @@ void PrimitiveModel::bind()
     the vertext array
     renderer*/
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * objShapes.size(), &objShapes[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * objShape.size(), &objShape[0], GL_STATIC_DRAW);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(verticiesSetUp), verticiesSetUp, GL_STATIC_DRAW);
 
     /*Create Element Array Buffer to store the indicies*/
@@ -123,7 +123,7 @@ void PrimitiveModel::bind()
 void PrimitiveModel::STATIC_UpdateBuffers()
 {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * objShapes.size(), &objShapes[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * objShape.size(), &objShape[0], GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indicies.size(), &indicies[0], GL_STATIC_DRAW);
 
