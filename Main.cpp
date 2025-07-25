@@ -37,6 +37,7 @@ bool isPerspective = true;
 bool isPaused = false;
 bool showDebugInfo = false;
 bool wireframeMode = false;
+bool bStart = false;
 
 // Newton's cradle parameters - PHYSICS CONSTANTS (independent of visual size)
 int numBalls = 5;
@@ -123,6 +124,12 @@ void processInput(GLFWwindow* window, float deltaTime)
         cameraPos -= direction * cameraSpeed * deltaTime;
     }
 
+    //Start 
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        bStart = true;
+    }
+
     // Projection switching
     static bool key1Last = false;
     static bool key2Last = false;
@@ -174,7 +181,7 @@ void processInput(GLFWwindow* window, float deltaTime)
 
     // Spacebar pause toggle
     static bool spacePressed = false;
-    bool currentSpaceState = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
+    bool currentSpaceState = false;
     if (currentSpaceState && !spacePressed)
     {
         isPaused = !isPaused;
@@ -227,11 +234,11 @@ int main(void)
 
     // ===== NEWTON'S CRADLE SETUP =====
     const int NUM_BALLS = numBalls;
-    const float BALL_RADIUS = ballRadius/100.f;          // Visual and collision radius
-    const float BALL_MASS = ballMass/100.f;              // Mass (independent of radius)
-    const float STRING_LENGTH = stringLength/100.0f;      // Fixed string length
+    const float BALL_RADIUS = ballRadius/1000.f;          // Visual and collision radius
+    const float BALL_MASS = ballMass/1000.f;              // Mass (independent of radius)
+    const float STRING_LENGTH = stringLength;      // Fixed string length
     const float ANCHOR_HEIGHT = anchorHeight;      // Fixed anchor height
-    const float BALL_SPACING = ballSpacing/100.0f; 
+    const float BALL_SPACING = ballSpacing/1000.0f; 
 
     // Ball spacing is now constant, independent of ball radius
 
@@ -275,9 +282,7 @@ int main(void)
         balls[i]->mass = BALL_MASS;                    // Fixed mass
         balls[i]->radius = BALL_RADIUS;                // Set particle radius to match visual radius
         balls[i]->restitution = 2.0f;                 // High restitution for good energy transfer
-       
-        if (i == 0) balls[i]->Velocity = P6::MyVector(forceX, forceY, forceZ);
-        else balls[i]->Velocity = P6::MyVector(0, 0, 0);
+        balls[i]->Velocity = P6::MyVector(0, 0, 0);
 
         pWorld.addParticle(balls[i]);
 
@@ -361,6 +366,8 @@ int main(void)
                 {
                     ApplyStringConstraints(anchors[i], balls[i], STRING_LENGTH, physicsTimeStep);
                 }
+
+                if (bStart) balls[0]->addForce(P6::MyVector(forceX, forceY, forceZ));
 
                 // FIXED COLLISION HANDLING between balls
                 const int collisionIterations = 2;
