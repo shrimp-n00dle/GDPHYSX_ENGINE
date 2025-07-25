@@ -44,7 +44,9 @@ float ballRadius = 0.2f;        // Visual and collision radius
 float ballMass = 1.0f;          // Mass (independent of radius)
 float stringLength = 1.0f;      // String length (constant)
 float anchorHeight = 0.8f;      // Anchor height (constant)
-const float BALL_SPACING = 0.4f;  // Fixed spacing between ball centers (constant)
+float ballSpacing = 0.4f;       // Fixed spacing between ball centers (constant)
+float gravityStrength = 9.8f;
+float forceX, forceY, forceZ;
 
 // String constraint function
 void ApplyStringConstraints(P6::MyParticle* anchor, P6::MyParticle* ball, float stringLength, float deltaTime)
@@ -192,7 +194,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = glfwCreateWindow(800, 800, "Group 8 / Newton's Cradle - Fixed Version", NULL, NULL);
+    window = glfwCreateWindow(800, 800, "Group 8 / Newton's Cradle / FOUNTAIN ENGINE", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -213,12 +215,24 @@ int main(void)
     P6::PhysicsWorld pWorld = P6::PhysicsWorld();
     std::list<RenderParticle*> rParticleList;
 
+    //Ask for input first
+    std::cout << "Cable Length: "; std::cin >> stringLength;
+    std::cout << "Particle Gap: "; std::cin >> ballSpacing;
+    std::cout << "Particle Radius: "; std::cin >> ballRadius;
+    std::cout << "Gravity Strength: "; std::cin >> gravityStrength;
+    std::cout << "Apply Force" << std::endl << "X :";  std::cin >> forceX;
+    std::cout << "Y: "; std::cin >> forceY;
+    std::cout << "Z: "; std::cin >> forceZ;
+
+
     // ===== NEWTON'S CRADLE SETUP =====
     const int NUM_BALLS = numBalls;
-    const float BALL_RADIUS = ballRadius;          // Visual and collision radius
-    const float BALL_MASS = ballMass;              // Mass (independent of radius)
-    const float STRING_LENGTH = stringLength;      // Fixed string length
+    const float BALL_RADIUS = ballRadius/100.f;          // Visual and collision radius
+    const float BALL_MASS = ballMass/100.f;              // Mass (independent of radius)
+    const float STRING_LENGTH = stringLength/100.0f;      // Fixed string length
     const float ANCHOR_HEIGHT = anchorHeight;      // Fixed anchor height
+    const float BALL_SPACING = ballSpacing/100.0f; 
+
     // Ball spacing is now constant, independent of ball radius
 
     std::cout << "=== NEWTON'S CRADLE SETUP ===" << std::endl;
@@ -261,7 +275,9 @@ int main(void)
         balls[i]->mass = BALL_MASS;                    // Fixed mass
         balls[i]->radius = BALL_RADIUS;                // Set particle radius to match visual radius
         balls[i]->restitution = 2.0f;                 // High restitution for good energy transfer
-        balls[i]->Velocity = P6::MyVector(0, 0, 0);
+       
+        if (i == 0) balls[i]->Velocity = P6::MyVector(forceX, forceY, forceZ);
+        else balls[i]->Velocity = P6::MyVector(0, 0, 0);
 
         pWorld.addParticle(balls[i]);
 
@@ -281,10 +297,6 @@ int main(void)
         rParticleList.push_back(renderBalls[i]);
     }
 
-    // Give the first ball an initial push to start the cradle
-    balls[0]->Position.x -= 0.8f; // Move it to the side
-    balls[0]->Position.y += 0.3f;  // Lift it up a bit
-
     // Add very light damping for realism
     P6::DragForceGenerator drag = P6::DragForceGenerator(0.005f, 0.005f);
     for (int i = 0; i < NUM_BALLS; i++)
@@ -299,6 +311,8 @@ int main(void)
     std::chrono::nanoseconds curr_ns(0);
 
     auto lastFrameTime = clock::now();
+
+
 
     // Print controls
     std::cout << "=== NEWTON'S CRADLE CONTROLS ===" << std::endl;
