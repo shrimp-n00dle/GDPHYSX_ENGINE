@@ -27,12 +27,12 @@ namespace P6
 		//Calls the UPDATE OF ALL
 		void Update(float time);
 
+		void UpdateWithoutCollisions(float time);
 	private:
 		void updateParticleList();
 
 		//GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -9.8, 0));
-		//GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -9.8, 0)); FIX USE THIS
-		GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -0.2, 0));
+		GravityForceGenerator Gravity = GravityForceGenerator(MyVector(0, -9.8, 0));
 
 	protected:
 
@@ -41,6 +41,8 @@ namespace P6
 		void generateContacts();
 
 		void getOverlaps();
+
+		
 
 
 	};

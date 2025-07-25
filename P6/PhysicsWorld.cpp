@@ -75,6 +75,7 @@ void P6::PhysicsWorld::generateContacts()
 	}
 }
 
+// Fixed PhysicsWorld.cpp - getOverlaps() function
 void P6::PhysicsWorld::getOverlaps()
 {
 	for (int i = 0; i < particleList.size() - 1; i++)
@@ -85,23 +86,74 @@ void P6::PhysicsWorld::getOverlaps()
 		{
 			std::list<MyParticle*>::iterator b = std::next(particleList.begin(), h);
 
-			MyVector mag2Vector = (*a)->Position - (*b)->Position;
+			MyVector distanceVector = (*a)->Position - (*b)->Position;
 
-			double mag2 = mag2Vector.SqMagnitude();
-			double rad = (*a)->radius + (*b)->radius;
-			float rad2 = rad * rad * rad * rad * rad * rad;
+			// Calculate actual distance (not squared)
+			float distance = distanceVector.Magnitude();
+			//float combinedRadius = (*a)->radius + (*b)->radius;
+			float combinedRadius = ((*a)->radius + (*b)->radius) * ((*a)->radius + (*b)->radius) * ((*a)->radius + (*b)->radius);
 
-			if (mag2 <= rad2)
+			// DEBUG: Print collision detection info (remove this after testing)
+			if (distance < combinedRadius + 0.1f) // Print when close
 			{
-				std::cout << "COLLISION DETECTED" << std::endl;
-				MyVector dir = mag2Vector.Direction();
-				double r = rad2 - mag2;
-				double depth = sqrt(r);
+				std::cout << "Particles close - Distance: " << distance << ", Combined Radius: " << combinedRadius
+					<< ", A radius: " << (*a)->radius << ", B radius: " << (*b)->radius << std::endl;
+			}
 
-				double restitution = fmin((*a)->restitution, (*b)->restitution);
+			// Check for collision using actual distances with small tolerance
+			// Add small epsilon to prevent floating point precision issues
+			if (distance < combinedRadius - 0.001f) // Small tolerance to prevent early collision
+			{
+				std::cout << "COLLISION DETECTED - Distance: " << distance << ", Combined Radius: " << combinedRadius << std::endl;
 
-				AddContact(*a, *b, restitution, dir, depth);
+				// Calculate penetration depth correctly
+				float depth = combinedRadius - distance;
+
+				// Ensure minimum depth
+				if (depth < 0.001f) depth = 0.001f;
+
+				// Get collision normal (direction from b to a)
+				MyVector contactNormal;
+				if (distance > 0.0001f) // Avoid division by zero
+				{
+					contactNormal = distanceVector.scalarMultiplication(1.0f / distance); // Normalize
+				}
+				else
+				{
+					// If particles are exactly on top of each other, use arbitrary normal
+					contactNormal = MyVector(1, 0, 0);
+				}
+
+				float restitution = fmin((*a)->restitution, (*b)->restitution);
+
+				AddContact(*a, *b, restitution, contactNormal, depth);
 			}
 		}
 	}
+}
+
+// Modified PhysicsWorld::Update method - Add this to your PhysicsWorld class
+// or create a new method called UpdateWithoutCollisions
+
+void P6::PhysicsWorld::UpdateWithoutCollisions(float time)
+{
+	updateParticleList();
+
+	forceRegistry.updateForces(time);
+
+	for (std::list<MyParticle*>::iterator p = particleList.begin();
+		//If its not the end, move to the next particle
+		p != particleList.end(); p++)
+
+	{
+		/*Call the update*/
+		(*p)->updateParticle(time);
+	}
+
+	// Skip collision detection and resolution
+	// generateContacts();
+	// if (Contacts.size() > 0)
+	// {
+	//     contactResolver.resolveContacts(Contacts, time);
+	// }
 }
