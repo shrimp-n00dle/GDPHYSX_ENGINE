@@ -216,8 +216,8 @@ int main(void)
     std::list<RenderParticle*> rParticleList;
 
     //Ask for input (removed radius input, now using default)
-    std::cout << "Cable Length: "; std::cin >> stringLength;
-    std::cout << "Particle Gap: "; std::cin >> ballSpacing;
+    std::cout << "Cable Length [Maximum 1.0f]: "; std::cin >> stringLength;
+    std::cout << "Particle Gap [Maximum 0.5f]: "; std::cin >> ballSpacing;
     std::cout << "Gravity Strength: "; std::cin >> gravityStrength;
     std::cout << "Apply Force" << std::endl << "X :";  std::cin >> forceX;
     std::cout << "Y: "; std::cin >> forceY;
