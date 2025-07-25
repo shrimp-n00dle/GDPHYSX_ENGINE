@@ -90,7 +90,8 @@ void P6::PhysicsWorld::getOverlaps()
 
 			// Calculate actual distance (not squared)
 			float distance = distanceVector.Magnitude();
-			float combinedRadius = (*a)->radius + (*b)->radius;
+			//float combinedRadius = (*a)->radius + (*b)->radius;
+			float combinedRadius = ((*a)->radius + (*b)->radius) * ((*a)->radius + (*b)->radius) * ((*a)->radius + (*b)->radius);
 
 			// DEBUG: Print collision detection info (remove this after testing)
 			if (distance < combinedRadius + 0.1f) // Print when close

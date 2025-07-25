@@ -37,16 +37,15 @@ bool isPerspective = true;
 bool isPaused = false;
 bool showDebugInfo = false;
 bool wireframeMode = false;
-bool bStart = false;
 
 // Newton's cradle parameters - PHYSICS CONSTANTS (independent of visual size)
 int numBalls = 5;
-float ballRadius = 0.2f;        // Visual and collision radius
+float ballRadius = 0.2f;       // Default radius set to 0.25
 float ballMass = 1.0f;          // Mass (independent of radius)
 float stringLength = 1.0f;      // String length (constant)
 float anchorHeight = 0.8f;      // Anchor height (constant)
 float ballSpacing = 0.4f;       // Fixed spacing between ball centers (constant)
-float gravityStrength = 9.8f;
+float gravityStrength = -9.8f;
 float forceX, forceY, forceZ;
 
 // String constraint function
@@ -124,12 +123,6 @@ void processInput(GLFWwindow* window, float deltaTime)
         cameraPos -= direction * cameraSpeed * deltaTime;
     }
 
-    //Start 
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    {
-        bStart = true;
-    }
-
     // Projection switching
     static bool key1Last = false;
     static bool key2Last = false;
@@ -179,15 +172,15 @@ void processInput(GLFWwindow* window, float deltaTime)
     }
     keyFLast = keyFNow;
 
-    // Spacebar pause toggle
-    static bool spacePressed = false;
-    bool currentSpaceState = false;
-    if (currentSpaceState && !spacePressed)
+    // Pause toggle with 'P' key
+    static bool keyPLast = false;
+    bool keyPNow = glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS;
+    if (keyPNow && !keyPLast)
     {
         isPaused = !isPaused;
         std::cout << (isPaused ? "Simulation PAUSED" : "Simulation RESUMED") << std::endl;
     }
-    spacePressed = currentSpaceState;
+    keyPLast = keyPNow;
 
     // ESC to close window
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -222,29 +215,27 @@ int main(void)
     P6::PhysicsWorld pWorld = P6::PhysicsWorld();
     std::list<RenderParticle*> rParticleList;
 
-    //Ask for input first
+    //Ask for input (removed radius input, now using default)
     std::cout << "Cable Length: "; std::cin >> stringLength;
     std::cout << "Particle Gap: "; std::cin >> ballSpacing;
-    std::cout << "Particle Radius: "; std::cin >> ballRadius;
     std::cout << "Gravity Strength: "; std::cin >> gravityStrength;
     std::cout << "Apply Force" << std::endl << "X :";  std::cin >> forceX;
     std::cout << "Y: "; std::cin >> forceY;
     std::cout << "Z: "; std::cin >> forceZ;
 
-
     // ===== NEWTON'S CRADLE SETUP =====
     const int NUM_BALLS = numBalls;
-    const float BALL_RADIUS = ballRadius/1000.f;          // Visual and collision radius
-    const float BALL_MASS = ballMass/1000.f;              // Mass (independent of radius)
+    const float BALL_RADIUS = ballRadius ;          // Visual and collision radius (default 0.25)
+    const float BALL_MASS = ballMass ;              // Mass (independent of radius)
     const float STRING_LENGTH = stringLength;      // Fixed string length
     const float ANCHOR_HEIGHT = anchorHeight;      // Fixed anchor height
-    const float BALL_SPACING = ballSpacing/1000.0f; 
+    const float BALL_SPACING = ballSpacing;
 
     // Ball spacing is now constant, independent of ball radius
 
     std::cout << "=== NEWTON'S CRADLE SETUP ===" << std::endl;
     std::cout << "Number of balls: " << NUM_BALLS << std::endl;
-    std::cout << "Ball radius: " << BALL_RADIUS << std::endl;
+    std::cout << "Ball radius: " << BALL_RADIUS << " (default)" << std::endl;
     std::cout << "Ball spacing: " << BALL_SPACING << std::endl;
     std::cout << "String length: " << STRING_LENGTH << std::endl;
     std::cout << "Anchor height: " << ANCHOR_HEIGHT << std::endl;
@@ -317,8 +308,6 @@ int main(void)
 
     auto lastFrameTime = clock::now();
 
-
-
     // Print controls
     std::cout << "=== NEWTON'S CRADLE CONTROLS ===" << std::endl;
     std::cout << "WASD: Camera movement" << std::endl;
@@ -327,7 +316,8 @@ int main(void)
     std::cout << "2: Perspective projection" << std::endl;
     std::cout << "I: Toggle debug information" << std::endl;
     std::cout << "F: Toggle wireframe mode" << std::endl;
-    std::cout << "SPACE: Pause/Resume simulation" << std::endl;
+    std::cout << "P: Pause/Resume simulation" << std::endl;
+    std::cout << "SPACE: Apply force to leftmost ball" << std::endl;
     std::cout << "ESC: Exit" << std::endl;
     std::cout << "===============================" << std::endl;
 
@@ -344,6 +334,17 @@ int main(void)
         lastFrameTime = curr_time;
 
         processInput(window, deltaTime);
+
+        // Handle spacebar input for applying force to leftmost ball
+        static bool spacePressed = false;
+        bool currentSpaceState = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+        if (currentSpaceState && !spacePressed)
+        {
+            // Apply force to the leftmost ball (index 0)
+            balls[0]->addForce(P6::MyVector(forceX, forceY, forceZ));
+            std::cout << "Force applied to leftmost ball: (" << forceX << ", " << forceY << ", " << forceZ << ")" << std::endl;
+        }
+        spacePressed = currentSpaceState;
 
         auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(curr_time - prev_time);
         prev_time = curr_time;
@@ -366,8 +367,6 @@ int main(void)
                 {
                     ApplyStringConstraints(anchors[i], balls[i], STRING_LENGTH, physicsTimeStep);
                 }
-
-                if (bStart) balls[0]->addForce(P6::MyVector(forceX, forceY, forceZ));
 
                 // FIXED COLLISION HANDLING between balls
                 const int collisionIterations = 2;
