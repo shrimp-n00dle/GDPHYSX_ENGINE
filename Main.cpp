@@ -18,7 +18,7 @@
 #include "P6/AnchoredRope.h"
 
 #include "RenderParticle.h"
-#include "ComplexParticle.h"
+//#include "ComplexParticle.h"
 #include "Classes/Model.h"
 #include "Classes/Shader.h"
 #include "ContactResolver.h"
@@ -158,7 +158,7 @@ int main(void)
     /*RENDER PARTICLE IMPLEMENTATION*/
     std::list<RenderParticle*> rParticleList;
     /*COMPLEX PARTICLE IMPLEMENTATION*/
-    std::list<ComplexParticle*> rComplexParticleList;
+    //std::list<ComplexParticle*> rComplexParticleList;
 
     /*PENDULUM IMPLEMENTATION*/
     std::vector<P6::MyParticle*> pendulumParticles;
